@@ -1,6 +1,18 @@
+#'@docType package
+#'Package: mc
+#'Type: Package
+#'Title: Commonly used function for Nutriomique Team (INSERM U872)
+#'Version: 0.1
+#'Date: 2013-06-07
+#'Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen
+#'Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
+#'Description: Statistical and datamining tools for metagenomic data analysis.
+#'License: PPL
+
+
 #'@docType methods
-#'@title Package installation
-#'@description Check if a packages installed
+#'@title Checking package installation
+#'@description Check whether a packages is installed
 #'@param pkg name of package
 #'@return A logical value indicating whether the package is installed
 #'@author Hoai Tuong Nguyen
@@ -14,7 +26,27 @@ check.installed.mc<-function(pkg){
   return(is.element(pkg, installed.packages()[,1]))
 }
 
+#'@docType methods
+#'@title Loading and Listing of Packages
+#'@description On-the-fly load or install a package
+#'@param pkg name of package
+#'@return A list of attached packages
+#'@author Hoai Tuong Nguyen
+#'@examples
+#'check.installed.mc("xtable")
+#'@seealso \code{\link[utils]{install.packages}}
+#'@aliases library.mc
+#'@rdname library.mc
+#'@export library.mc
+library.mc<-function(pkg){
+if(!check.installed.mc(pkg))
+  install.packages(pkg)
+  print(pkg)
+  library(pkg,character.only=TRUE)
+}
 
+#Load dependencies
+library.mc("xtable")
 
 
 #'@docType methods
@@ -34,17 +66,13 @@ check.installed.mc<-function(pkg){
 #'@rdname read.table.mc
 #'@export read.table.mc
 read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
-  
   tab5rows <- read.table(file, nrows = 5,sep=sep)
   classes <- sapply(tab5rows, class)
   tabAll <- read.table(file,  header=header, colClasses=classes,sep=sep,nrows=nrow,comment.char = "")
-  
   return(tabAll)
 }
 
-if(!check.installed.mc("xtable"))
-  install.packages("xtable")
-require("xtable")
+
 
 
 
@@ -63,37 +91,25 @@ require("xtable")
 #'@rdname summary.numeric.mc
 #'@export summary.numeric.mc
 summary.numeric.mc<-function(object,latex=FALSE){
-  
   classes<-sapply(1:ncol(object), function(x) class(object[,x]))
-  
   summary.numeric<-sapply(which(classes=="numeric"), function(x) as.vector(summary(object[,x]))) 
-  
   if (length(which(is.na(object)))>0){
     summary.numeric<-sapply(which(classes=="numeric"), function(x) as.vector(summary(object[,x]))) 
     tmp <- object.frame()
     for(i in seq(along=summary.numeric)) for(j in 1:length(summary.numeric[[i]]))
       tmp[i,j] <- ifelse(is.na(summary.numeric[[i]][j]),"0",summary.numeric[[i]][j])
-  
     summary.numeric<-tmp
-    
     colnames(summary.numeric)<-c(names(summary(1)),"NA")
-    
     summary.numeric[which(is.na(summary.numeric[,7])),7]<-"0"    
   } else {
     summary.numeric<-t(data.frame(sapply(which(classes=="numeric"), function(x) as.vector(summary(object[,x])))))
     colnames(summary.numeric)<-names(summary(1))
   }
-  
   rownames(summary.numeric)<-colnames(object)[which(classes=="numeric")]
-  
-
   if(latex){
-
     print(xtable(summary.numeric))
   }
-  
   return(summary.numeric)
-  
 }
 
 
