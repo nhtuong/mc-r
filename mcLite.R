@@ -3,7 +3,7 @@
 #'Type: Package
 #'Title: Commonly used function for Nutriomique Team (INSERM U872)
 #'Version: 0.1
-#'Date: 2013-06-07
+#'Date: 2013-06-12
 #'Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen
 #'Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
 #'Description: Statistical and datamining tools for metagenomic data analysis.
