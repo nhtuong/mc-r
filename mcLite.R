@@ -1,10 +1,10 @@
 #'@docType package
 #'Package: mc
 #'Type: Package
-#'Title: Commonly used function for Nutriomique Team (INSERM U872)
+#'Title: Commonly used functions for Nutriomique Team (INSERM U872)
 #'Version: 0.1
 #'Date: 2013-06-12
-#'Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen
+#'Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
 #'Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
 #'Description: Statistical and datamining tools for metagenomic data analysis.
 #'License: PPL
