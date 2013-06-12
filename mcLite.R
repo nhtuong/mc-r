@@ -15,7 +15,7 @@ if(FALSE){
 #load "mc" package
 library(mc)
 
-#load "xtable" package, automatically install if the package does not exist, then load it
+#load "xtable" package, automatically install the package if it does not exist, then load it
 library.mc("xtable")
 
 #read a large file
