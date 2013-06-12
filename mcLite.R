@@ -41,7 +41,6 @@ check.installed.mc<-function(pkg){
 library.mc<-function(pkg){
 if(!check.installed.mc(pkg))
   install.packages(pkg)
-  print(pkg)
   library(pkg,character.only=TRUE)
 }
 
