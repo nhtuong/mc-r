@@ -9,6 +9,32 @@
 #'Description: Statistical and datamining tools for metagenomic data analysis.
 #'License: PPL
 
+#Examples
+if(FALSE){
+
+#load "mc" package
+library(mc)
+
+#load "xtable" package, automatically install if the package does not exist, then load it
+library.mc("xtable")
+
+#read a large file
+data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
+
+#get statistics on the columns of a matrix/data.frame and export the results as table to Latex codes
+attach(mtcars)
+sum<-summary.numeric.mc(mtcars,latex=T)
+
+#test the normality of a (list of) numeric variable(s)
+attach(mtcars)
+normality.mc(mtcars)
+
+#get class type for a (list of) variable(s)
+attach(mtcars)
+class.mc(mtcars)
+
+}
+
 
 #'@docType methods
 #'@title Checking package installation
