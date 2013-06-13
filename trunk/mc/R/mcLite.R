@@ -1,5 +1,4 @@
 #Package: mc
-#Type: Package
 #Title: Commonly used functions for Nutriomique Team (INSERM U872)
 #Version: 0.1
 #Date: 2013-06-12
