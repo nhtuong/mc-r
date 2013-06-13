@@ -1,0 +1,16 @@
+{
+    "contents" : "\\name{mc-package}\n\\alias{mc-package}\n\\alias{mc}\n\\docType{package}\n\\title{\n  What the package does (short line)\n  \n}\n\\description{\n  More about what it does (maybe more than one line)\n  \n}\n\\details{\n  \\tabular{ll}{\n    Package: \\tab mc\\cr\n    Type: \\tab Package\\cr\n    Version: \\tab 1.0\\cr\n    Date: \\tab 2013-06-13\\cr\n    License: \\tab What license is it under?\\cr\n  }\n}\n\\author{\n  Who wrote it\n  \n  Maintainer: Who to complain to <yourfault@somewhere.net>\n}\n\\references{\n}\n\n\\keyword{ package }\n\\seealso{\n  \n}\n\\examples{\n  \n}\n",
+    "created" : 1371138712747.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "952099899",
+    "id" : "3F02D01E",
+    "lastKnownWriteTime" : 578055781,
+    "path" : null,
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
