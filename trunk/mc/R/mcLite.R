@@ -1,7 +1,7 @@
 #Package: mc
 #Title: Commonly used functions for Nutriomique Team (INSERM U872)
 #Version: 0.1
-#Date: 2013-06-12
+#Date: 2013-06-14
 #Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
 #Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
 #Description: Statistical and datamining tools for metagenomic data analysis.
@@ -31,12 +31,40 @@ if(FALSE){
   attach(mtcars)
   class.mc(mtcars)
   
+  #plot the correlation, add lowess line to plot and write the output
+  output.dir="../results"
+  attach(swiss)
+  reg.plot.mc(Fertility,Agriculture,
+              type="lowess",
+              pch=ifelse(swiss$Examination>10, 0, 1),         
+              subjects=as.vector(rownames(swiss)),
+              title="CORRELATION - LOWESS",
+              xlab="Fertility",ylab="Agriculture",
+              legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),
+                              col=c("black","black")),
+              imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
+              pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))  
+  
+  #draw a boxplot for two classes, add results of t-test to plot, write the output
+  output.dir="../results"
+  attach(lung)
+  pdf(sprintf("%s/lung_factors_by_sex_boxplot.pdf",output.dir))
+  outfile<-sprintf("%s/lung_factors_by_sex_t-test.csv",output.dir)
+  par(mfrow = c(4, 4))
+  lapply(c(1:4,6:10),function(x) boxplot.class.mc(data=lung,x,
+                                                  class=lung$sex,
+                                                  xlab="Sex (0=Female, 1=Male)",
+                                                  outfile=outfile))
+  dev.off()
+  
+  
 }
 
 
 
 #'@name check.installed.mc
 #'@aliases check.installed.mc
+#'@export check.installed.mc
 #'@docType methods
 #'@title Checking package installation
 #'@description Check whether a packages is installed
@@ -54,6 +82,7 @@ check.installed.mc<-function(pkg){
 
 #'@name library.mc
 #'@aliases library.mc
+#'@export library.mc
 #'@docType methods
 #'@title Loading and Listing of Packages
 #'@description On-the-fly load or install a package
@@ -73,9 +102,11 @@ library.mc<-function(pkg){
 
 #Load dependencies
 library.mc("xtable")
+library.mc("Hmisc")
 
 #'@name read.table.mc
 #'@aliases read.table.mc
+#'@export read.table.mc
 #'@docType methods
 #'@title Data Input
 #'@description Read a very large data file
@@ -90,8 +121,11 @@ library.mc("xtable")
 #'data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
 #'@seealso \code{\link[utils]{read.table}}
 read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
+  #read 5 first rows to get class names of column
   tab5rows <- read.table(file, nrows = 5,sep=sep)
+  #get class names
   classes <- sapply(tab5rows, class)
+  #get data frame with specific parameter
   tabAll <- read.table(file,  header=header, colClasses=classes,sep=sep,nrows=nrow,comment.char = "")
   return(tabAll)
 }
@@ -100,6 +134,7 @@ read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
 
 #'@name summary.numeric.mc
 #'@aliases summary.numeric.mc
+#'@export summary.numeric.mc
 #'@docType methods
 #'@title Object Summaries
 #'@description Summarize an numeric table, save the output to a table, export the output to Latex code
@@ -112,8 +147,11 @@ read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
 #'sum<-summary.numeric.mc(mtcars,latex=T)
 #'@seealso \code{\link[base]{summary}}
 summary.numeric.mc<-function(object,latex=FALSE){
+  #get classes of columns
   classes<-sapply(1:ncol(object), function(x) class(object[,x]))
+  #get summaries for numeric columns
   summary.numeric<-sapply(which(classes=="numeric"), function(x) as.vector(summary(object[,x]))) 
+  #transform summaries into table format
   if (length(which(is.na(object)))>0){
     summary.numeric<-sapply(which(classes=="numeric"), function(x) as.vector(summary(object[,x]))) 
     tmp <- object.frame()
@@ -127,6 +165,7 @@ summary.numeric.mc<-function(object,latex=FALSE){
     colnames(summary.numeric)<-names(summary(1))
   }
   rownames(summary.numeric)<-colnames(object)[which(classes=="numeric")]
+  #export table into Latex code
   if(latex){
     print(xtable(summary.numeric))
   }
@@ -137,6 +176,7 @@ summary.numeric.mc<-function(object,latex=FALSE){
 
 #'@name normality.mc
 #'@aliases normality.mc
+#'@export normality.mc
 #'@docType methods
 #'@title Normality Test
 #'@description Perform a normality test for variables 
@@ -157,6 +197,7 @@ normality.mc<-function(m,alpha=0.05){
 
 #'@name class.mc
 #'@aliases class.mc
+#'@export class.mc
 #'@docType methods
 #'@title Object Classes
 #'@description Get class of variable
@@ -171,3 +212,130 @@ class.mc<-function(m){
     return(sapply(1:ncol(m),function(x) class(m[,x])))
   else return(class(m))
 }
+
+
+#'@name reg.plot.mc
+#'@aliases reg.plot.mc
+#'@export reg.plot.mc
+#'@docType methods
+#'@title X-Y Plotting
+#'@description Plot a pair of variables and add regression line (linear or lowess) to plot
+#'@param x a numeric vector 
+#'@param y a numeric vector 
+#'@param type type of regression line 
+#'@param pch type points
+#'@param subjects list of labels for points
+#'@param title main title of plot
+#'@param xlab a title for the x axis
+#'@param ylab a title for the y axis
+#'@param col list of colors for points
+#'@param legend.topleft legend at the top-left of plot
+#'@param legend.topright legend at the top-right of plot
+#'@param imgfile image output filename
+#'@param pointsfile points output filename
+#'@author Hoai Tuong Nguyen
+#'@examples
+#'output.dir="../results"
+#'attach(swiss)
+#'reg.plot.mc(Fertility,Agriculture,
+#'            type="lowess",
+#'            pch=ifelse(swiss$Examination>10, 0, 1),         
+#'            subjects=as.vector(rownames(swiss)),
+#'            title="CORRELATION - LOWESS",
+#'            xlab="Fertility",ylab="Agriculture",
+#'            legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),col=c("black","black")),
+#'            imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
+#'            pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))
+reg.plot.mc<-function(x,y,type="lm",pch,subjects=NULL,title="CORRELATION",xlab="X",ylab="Y",col,legend.topleft,legend.topright,imgfile=NULL,pointsfile=NULL){
+  
+  #correlation
+  r=rcorr(x,y,type="pearson")[[1]][1,2]
+  rho=rcorr(x,y,type="spearman")[[1]][1,2]
+  
+  #output plot
+  if (!missing(imgfile))
+    pdf(file=imgfile)
+  
+  #colors of points
+  if (missing(col))
+    col=rep("black",length(x),)
+  
+  #main plot
+  plot(x,y,pch=pch,main=sprintf("%s\n%s vs %s \nr=%0.4f; rho=%0.4f",title,ylab,xlab,r,rho),xlab=xlab,ylab=ylab,col=col)
+  
+  #labels
+  text(x, y, subjects, cex=0.3,pos=1,offset=0.2)
+  
+  #Regression line
+  if (type=="lowess"){
+    lw<-lowess(x,y)
+    lines(lw,col=3)
+    up<-which(x>lw$x & y>lw$y)
+  } else if (type=="lm") {
+    lm<-lm(y~x)
+    abline(lm)
+    up<-which(y>fitted(lm))
+  }
+  
+  #Legend  
+  if (!missing(legend.topleft))
+    legend("topleft", title=legend.topleft$title,pch=legend.topleft$pch, legend = legend.topleft$label, col = legend.topleft$col, cex=0.4)
+  if (!missing(legend.topright))
+    legend("topright", title=legend.topright$title,pch=legend.topright$pch, legend = legend.topright$label, col = legend.topright$col, cex=0.4)
+  
+  
+  #output points
+  if (!missing(pointsfile)){
+    p<-rep("0",length(x))
+    p[up]<-"1"
+    if (!missing(subjects))
+      write.table(rbind(c("Name",xlab,ylab,"Levels"),cbind(subjects,x,y,p)),file=pointsfile,col.names=F,row.names=F,sep=",",quote=F)
+    else 
+      write.table(rbind(c(xlab,ylab,"Levels"),cbind(x,y,p)),file=pointsfile,col.names=F,row.names=T,quote=F)
+  }
+  
+  #end of output plot
+  if (!missing(imgfile))
+    dev.off()
+  
+}
+
+
+
+
+#'@name boxplot.class.mc
+#'@aliases boxplot.class.mc
+#'@export boxplot.class.mc
+#'@docType methods
+#'@title Box Plots 
+#'@description Draw a boxplot for a column of data frame
+#'@param data a data frame
+#'@param x index of column
+#'@param class vector of classes
+#'@param outfile output filename
+#'@author Hoai Tuong Nguyen
+#'@examples
+#'output.dir="../results"
+#'attach(lung)
+#'pdf(sprintf("%s/lung_factors_by_sex_boxplot.pdf",output.dir))
+#'outfile<-sprintf("%s/lung_factors_by_sex_t-test.csv",output.dir)
+#'par(mfrow = c(4, 4))
+#'lapply(c(1:4,6:10),function(x) boxplot.class.mc(data=lung,x,
+#'                                                class=lung$sex,
+#'                                                xlab="Sex (0=Female, 1=Male)",
+#'                                                outfile=outfile))
+#'dev.off()
+boxplot.class.mc<-function(data,x,class,xlab,ylab,outfile=NULL){
+  if(missing(ylab))
+    ylab=names(data)[x]
+  if(missing(xlab))
+    xlab=names(class)
+  boxplot(data[,x]~class,ylab=ylab,xlab=xlab)  
+  t.res<-t.test(data[,x]~class,ylab=names(data)[x])
+  title(main=sprintf("t=%0.2f; p=%0.2e\n%s",t.res$statistic,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*","")))),cex=0.5)
+  if(!missing(outfile)){
+    out<-cbind(names(data)[x],t.res$statistic,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*",""))))
+    write.table(out,outfile,col.names=F,row.names=F,append=T,quote=F,sep=";")
+  }   
+}
+
