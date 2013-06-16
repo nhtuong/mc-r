@@ -32,7 +32,7 @@ Nutriomique Team: \url{http://www.nutriomique.org/}
 \keyword{ \code{\link[mc]{library.mc}}]}
 
 \seealso{
-   \code{\link[mc]{library.mc},\link[mc]{read.table.mc},\link[mc]{read.table.mc},\link[mc]{summary.numeric.mc},\link[mc]{normality.mc},\link[mc]{class.mc}}
+   \code{\link[mc]{library.mc},\link[mc]{read.table.mc},\link[mc]{read.table.mc},\link[mc]{summary.numeric.mc},\link[mc]{normality.mc},\link[mc]{class.mc},\link[mc]{reg.plot.mc},\link[mc]{boxplot.class.mc}}
 }
 
 \examples{
