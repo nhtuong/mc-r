@@ -41,7 +41,7 @@ if(FALSE){
               title="CORRELATION - LOWESS",
               xlab="Fertility",ylab="Agriculture",
               legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),
-                              col=c("black","black")),
+                                   col=c("black","black")),
               imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
               pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))  
   
@@ -302,7 +302,6 @@ reg.plot.mc<-function(x,y,type="lm",pch,subjects=NULL,title="CORRELATION",xlab="
 
 
 
-
 #'@name boxplot.class.mc
 #'@aliases boxplot.class.mc
 #'@export boxplot.class.mc
@@ -325,17 +324,26 @@ reg.plot.mc<-function(x,y,type="lm",pch,subjects=NULL,title="CORRELATION",xlab="
 #'                                                xlab="Sex (0=Female, 1=Male)",
 #'                                                outfile=outfile))
 #'dev.off()
-boxplot.class.mc<-function(data,x,class,xlab,ylab,outfile=NULL){
+boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
   if(missing(ylab))
     ylab=names(data)[x]
   if(missing(xlab))
     xlab=names(class)
-  boxplot(data[,x]~class,ylab=ylab,xlab=xlab)  
-  t.res<-t.test(data[,x]~class,ylab=names(data)[x])
+  boxplot(data[,x]~class,ylab=ylab,xlab=xlab) 
+  if(type=="t")
+    t.res<-t.test(data[,x]~class,ylab=names(data)[x])
+  if(type=="mwu")
+    t.res<-wilcox.test(data[,x]~class,ylab=names(data)[x])
+  if(type=="auto")
+    if (shapiro.test(data[,x])$p.value<=0.05)
+      t.res<-t.test(data[,x]~class,ylab=names(data)[x])
+  else t.res<-wilcox.test(data[,x]~class,ylab=names(data)[x])
+  
   title(main=sprintf("t=%0.2f; p=%0.2e\n%s",t.res$statistic,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*","")))),cex=0.5)
   if(!missing(outfile)){
-    out<-cbind(names(data)[x],t.res$statistic,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*",""))))
+    out<-cbind(names(data)[x],t.res$statistic,t.res$p.value,
+               ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*",""))),
+               shapiro.test(data[,x])$p.value<=0.05)
     write.table(out,outfile,col.names=F,row.names=F,append=T,quote=F,sep=";")
   }   
 }
-
