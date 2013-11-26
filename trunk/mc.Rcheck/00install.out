@@ -1,0 +1,10 @@
+* installing *source* package 'mc' ...
+** R
+** preparing package for lazy loading
+Installing package(s) into 'C:/Users/Bibo/Dropbox/BI_NUTRIOMIQUES/2.SCRIPTS/src/MC-R/mc.Rcheck'
+(as 'lib' is unspecified)
+Error in contrib.url(repos, "source") : 
+  trying to use CRAN without setting a mirror
+Error : unable to load R code in package 'mc'
+ERROR: lazy loading failed for package 'mc'
+* removing 'C:/Users/Bibo/Dropbox/BI_NUTRIOMIQUES/2.SCRIPTS/src/MC-R/mc.Rcheck/mc'

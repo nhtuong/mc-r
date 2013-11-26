@@ -1,11 +1,12 @@
 #Package: mc
-#Title: Commonly used functions for Nutriomics Team (INSERM U872)
-#Version: 1.0
+#Title: Commonly used functions for Nutriomique Team (INSERM U872)
+#Version: 0.2
 #Date: 2013-11-26
 #Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
 #Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
-#Description: Statistical and datamining tools for omics data analysis.
+#Description: Statistical and datamining tools for metagenomic data analysis.
 #License: PPL
+
 
 #Examples
 if(FALSE){
@@ -603,6 +604,9 @@ boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
 }
 
 
+
+
+
 #'@name yule.Q.mc
 #'@aliases yule.Q.mc
 #'@export yule.Q.mc
@@ -646,7 +650,7 @@ samt.mc<-function(df,label,nperms=100,logged2=T,type="Two class unpaired",seq=F)
       samr.obj<-SAMseq(x=df,y=label,  resp.type=type, nperms=nperms,testStatistic="wilcoxon",fdr.output = 0.20)
     else samr.obj<-SAMseq(x=df,y=label,  resp.type=type, nperms=nperms,fdr.output = 0.20)
   }
-  
+
   delta.table <- samr.compute.delta.table(samr.obj)
   delta<-0.45
   siggenes.table<-samr.compute.siggenes.table(samr.obj,delta, data, delta.table)
@@ -697,55 +701,41 @@ samt.opt.mc<-function(df,label,nmax.perms=100, logged2=T,type="Two class unpaire
 
 
 
-
-#'@name samr.opt.cluster.mc
-#'@aliases samr.opt.cluster.mc
-#'@export samr.opt.cluster.mc
-#'@docType methods
-#'@title Optimized version of samr with clusters
-#'@description An optimized version of samr with cluster for gene differtiation analysis
-#'@param df a microarray dataframe 
-#'@param label vector of label
-#'@param nmax.perms number of maximum permutations
-#'@param logged2 logical. Expression level has been transformed by logorith base 2
-#'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 samr.opt.cluster.mc<-function(df,class,label=NULL,file,index,cluster,type="Two class unpaired",logged2=T,nmax.perms=200,seq=F){
   print(cluster)
   print(is.null(nrow(df)))
   if (!is.null(nrow(df)))
-    if ( nrow(df)>=10){
-      
-      if (exists("class")&is.null(label)){
-        print("OK")
-        label<-as.vector(class[colnames(df),4])
-        label[label==0]<-2
-      }
-      
-      sig<-samt.opt.mc(df, 
-                       label,
-                       nmax.perms=nmax.perms,
-                       logged2=logged2,
-                       type=type,
-                       seq=seq)
-      
-      i.opt<-which.max(unlist(sig[,2]))
-      
-      if (max(unlist(sig[,2]))>0){
-        sig.opt<-sig[i.opt,]
-        res.sig<-data.frame(sig.opt$samres.probeID,
-                            rep(index,length(sig.opt$samres.probeID)),
-                            sig.opt$samres.UpLow,
-                            sig.opt$samres.Stat,
-                            sig.opt$samres.RawpValue,
-                            sig.opt$samres.FoldChange,
-                            sig.opt$samres.FDR)
-        colnames(res.sig)<-c("probeID", "Index", "UpLow", "Stat",    "RawpValue",   "FoldChange", "FDR(%)")
-        write.table(res.sig,file=sprintf("%s_%s.csv",file,cluster),col.names=T,row.names=F,quote=F,sep="\t")    
-      }
-      return(sig)
+  if ( nrow(df)>=10){
+   
+    if (exists("class")&is.null(label)){
+      print("OK")
+      label<-as.vector(class[colnames(df),4])
+      label[label==0]<-2
     }
+    
+    sig<-samt.opt.mc(df, 
+                     label,
+                     nmax.perms=nmax.perms,
+                     logged2=logged2,
+                     type=type,
+                     seq=seq)
+    
+    i.opt<-which.max(unlist(sig[,2]))
+    
+    if (max(unlist(sig[,2]))>0){
+      sig.opt<-sig[i.opt,]
+      res.sig<-data.frame(sig.opt$samres.probeID,
+                          rep(index,length(sig.opt$samres.probeID)),
+                          sig.opt$samres.UpLow,
+                          sig.opt$samres.Stat,
+                          sig.opt$samres.RawpValue,
+                          sig.opt$samres.FoldChange,
+                          sig.opt$samres.FDR)
+      colnames(res.sig)<-c("probeID", "Index", "UpLow", "Stat",    "RawpValue",   "FoldChange", "FDR(%)")
+      write.table(res.sig,file=sprintf("%s_%s.csv",file,cluster),col.names=T,row.names=F,quote=F,sep="\t")    
+    }
+    return(sig)
+  }
   
 }
 
@@ -801,7 +791,7 @@ addsigText.mc<-function(x0,y0,x1,y1,lab="",offset){
 #'@param title title of bar plot
 #'@param col color of two columns
 #'@param xlab  a label for the x axis
-#'@param ylab  a label for the y axis
+#'@param ylab	a label for the y axis
 #'@param labels series of columns' names
 #'@author Hoai Tuong Nguyen
 #'@examples
@@ -843,7 +833,6 @@ heatmap.mc<-function(df,col){
 }
 
 
-
 #'@name FunNet.mc
 #'@aliases FunNet.mc
 #'@export FunNet.mc
@@ -868,18 +857,18 @@ heatmap.mc<-function(df,col){
 #'gene.clusters=NA, alpha=0.05, RV=0.90, sigma=NA, keep.rdata=FALSE, zip=TRUE,fileprefix=sprintf("%s.high.genes","OK"))
 
 FunNet.mc<-function (wd = "", org = "hsa", two.lists = TRUE, up.frame = NULL, 
-                     down.frame = NULL, genes.frame = NULL, restrict = FALSE, 
-                     ref.list = NULL, logged = FALSE, discriminant = FALSE, go.bp = TRUE, 
-                     go.cc = TRUE, go.mf = TRUE, kegg = TRUE, annot.method = "specificity", 
-                     annot.details = TRUE, direct = FALSE, enriched = TRUE, fdr = NA, 
-                     build.annot.net = TRUE, coexp.matrix = NULL, coexp.method = "spearman", 
-                     estimate.th = FALSE, hard.th = NA, soft.th = NA, topological = FALSE, 
-                     keep.sign = FALSE, level = NA, annot.clust.method = "umilds", 
-                     annot.prox.measure = "unilat.pond.norm.mean", test.recovery = FALSE, 
-                     test.robust = FALSE, replace.annot = NA, random.annot = FALSE, 
-                     build.gene.net = FALSE, gene.clust.method = "hclust", gene.net.details = FALSE, 
-                     gene.clusters = NA, alpha = 0.05, RV = 0.9, sigma = NA, keep.rdata = FALSE, 
-                     zip = TRUE,fileprefix) 
+               down.frame = NULL, genes.frame = NULL, restrict = FALSE, 
+               ref.list = NULL, logged = FALSE, discriminant = FALSE, go.bp = TRUE, 
+               go.cc = TRUE, go.mf = TRUE, kegg = TRUE, annot.method = "specificity", 
+               annot.details = TRUE, direct = FALSE, enriched = TRUE, fdr = NA, 
+               build.annot.net = TRUE, coexp.matrix = NULL, coexp.method = "spearman", 
+               estimate.th = FALSE, hard.th = NA, soft.th = NA, topological = FALSE, 
+               keep.sign = FALSE, level = NA, annot.clust.method = "umilds", 
+               annot.prox.measure = "unilat.pond.norm.mean", test.recovery = FALSE, 
+               test.robust = FALSE, replace.annot = NA, random.annot = FALSE, 
+               build.gene.net = FALSE, gene.clust.method = "hclust", gene.net.details = FALSE, 
+               gene.clusters = NA, alpha = 0.05, RV = 0.9, sigma = NA, keep.rdata = FALSE, 
+               zip = TRUE,fileprefix) 
 {
   if (org == "HS") {
     org <- "hsa"
@@ -1441,7 +1430,7 @@ as.numeric.mat.mc<-function(data,dec=","){
 #'TBD
 #'
 mat2list.mc<-function(data,alpha=0){
-  
+
   index.mc<-function(k,m){
     i=(k-1)%%m+1
     j=(k-1)%/%m+1
@@ -1499,7 +1488,7 @@ list2mat.mc<-function(list,nodes=NULL){
   cooc.mat<-t(cooc.mat)
   rownames(cooc.mat)<-colnames(cooc.mat)<-nodes
   
-  
+
   return(cooc.mat)
 }
 
@@ -1568,7 +1557,7 @@ getIgraph.mc<-function(nodes,edges,ncolors,ecolors,eweights,directed=TRUE,layout
   #  E(g)$color <- ecolors
   #if(exists("eweights"))
   #  E(g)$weight <-eweights
-  
+
   g$layout <- layout 
   
   #layout.fruchterman.reingold
@@ -1637,7 +1626,6 @@ igraph2gephi.mc <- function(g, filepath="converted_graph.gexf")
 }
 
 
-
 #'@aliases updateKDB.mc
 #'@export updateKDB.mc
 #'@docType methods
@@ -1650,6 +1638,18 @@ igraph2gephi.mc <- function(g, filepath="converted_graph.gexf")
 #'@author Hoai Tuong Nguyen
 #'@examples
 #'TBD
+
+getKDB.mc<-function(){
+  KDB<-get(load(file=sprintf("%s/INTEGRATION/KDB.RData",input.dir)))
+}
+
+saveKDB.mc<-function(){
+ save(KDB,file=sprintf("%s/INTEGRATION/KDB.RData",input.dir))
+}
+getKDB.mat.mc<-function(){
+  return(get(load(file=sprintf("%s/INTEGRATION/KDB.mat.RData",input.dir))))
+}
+
 updateKDB.mc<-function(newKDB.or,nodes=NULL){
   KDB.mat.or<-getKDB.mat.mc()
   KDB.or<-mat2list.mc(KDB.mat.or)
@@ -1662,60 +1662,13 @@ updateKDB.mc<-function(newKDB.or,nodes=NULL){
   return(meanKDB.mat.or)
 }
 
-#'@aliases getKDB.mc
-#'@export getKDB.mc
-#'@docType methods
-#'@title Getting knowledge database
-#'@description Getting knowledge database
-#'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-getKDB.mc<-function(){
-  KDB<-get(load(file=sprintf("%s/INTEGRATION/KDB.RData",input.dir)))
-}
-
-#'@aliases saveKDB.mc
-#'@export saveKDB.mc
-#'@docType methods
-#'@title Saving knowledge database
-#'@description Getting knowledge database
-#'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-saveKDB.mc<-function(){
-  save(KDB,file=sprintf("%s/INTEGRATION/KDB.RData",input.dir))
-}
-
-#'@aliases getKDB.mat.mc
-#'@export getKDB.mat.mc
-#'@docType methods
-#'@title Getting matrix of knowledge database
-#'@description Getting matrix of knowledge database
-#'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-getKDB.mat.mc<-function(){
-  return(get(load(file=sprintf("%s/INTEGRATION/KDB.mat.RData",input.dir))))
-}
 
 
 
 
+# Function for querying Neo4j from within R 
+# from http://stackoverflow.com/questions/11188918/use-neo4j-with-r
 
-#'@aliases neo4j.query.mc
-#'@export neo4j.query.mc
-#'@docType methods
-#'@title Executing a query of Cipher language
-#'@description Executing a query of Cipher language
-#'@param query
-#'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-#' Function for querying Neo4j from within R 
-#' from http://stackoverflow.com/questions/11188918/use-neo4j-with-r
-#' 
-#' start n=node(*) match n-[r?]->() delete r, n 
-#' sudo /etc/init.d/neo4j-service restart 
 neo4j.query.mc <- function(querystring) {
   library('bitops')
   library('RCurl')
@@ -1731,3 +1684,5 @@ neo4j.query.mc <- function(querystring) {
   return(data)
 }
 
+#start n=node(*) match n-[r?]->() delete r, n
+#sudo /etc/init.d/neo4j-service restart
