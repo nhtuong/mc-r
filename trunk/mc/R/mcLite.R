@@ -1731,3 +1731,41 @@ neo4j.query.mc <- function(querystring) {
   return(data)
 }
 
+
+
+
+
+#'@aliases errplot.mc
+#'@export errplot.mc
+#'@docType methods
+#'@title Plotting scatterplot with error bar
+#'@description Plotting scatterplot with error bar
+#'@author Hoai Tuong Nguyen
+#'@examples
+#'x = c(1:4)
+#'y = rnorm(4)
+#'df <- data.frame(x,y)
+#'err<- c(0.21,0.1,0.21,0.301)
+#'errplot.mc(x,y,err)
+errplot.mc<-function(x,y,err,xlab="x",ylab="y",title=""){
+  library("Hmisc")
+  df <- data.frame(x,y)
+  plot(df,xlab=xlab,ylab=ylab,main=title)
+  errbar( x, y, y + err, y - err )
+  lines(df)
+}
+
+#'@aliases corplot.mc
+#'@export corplot.mc
+#'@docType methods
+#'@title Plotting scatterplot with error bar
+#'@description Plotting scatterplot with error bar
+#'@author Hoai Tuong Nguyen
+#'@examples
+#'corplot.mc(iris[,1:4])
+library.mc("corrplot")
+corplot.mc<-function(df){
+  dat.scaled<-scale(df,center=TRUE,scale=TRUE);
+  corrplot(cor(dat.scaled), order = "hclust")
+}
+
