@@ -410,9 +410,9 @@ reg.plot.mc<-function(x,y,separator=NULL,type="none",quantile="outter",arrows=0,
 
 
 
-#'@name reg.plot.mc
-#'@aliases reg.plot.mc
-#'@export reg.plot.mc
+#'@name risk.level.mc
+#'@aliases risk.level.mc
+#'@export risk.level.mc
 #'@docType methods
 #'@title X-Y Plotting
 #'@description Plot a pair of variables and add regression line (linear or lowess) to plot
