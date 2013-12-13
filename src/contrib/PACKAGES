@@ -1,6 +1,6 @@
 Package: mc
 Version: 1.0
-Depends: methods
+Depends: zoo, corrplot, Hmisc, xtable, gdata, ggplot2, samr, bnlearn, FunNet, hgu95av2.db, sqldf, GO.db, hgu95av2
 License: PPL
 NeedsCompilation: yes
 MD5sum: 92f9e6deb40b9b11475bbaaa7f6bf904
