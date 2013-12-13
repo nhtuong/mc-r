@@ -14,10 +14,6 @@
 \description{
   Get class of variable
 }
-\examples{
-attach(mtcars)
-class.mc(mtcars)
-}
 \author{
   Hoai Tuong Nguyen
 }

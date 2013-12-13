@@ -19,10 +19,6 @@
   Summarize an numeric table, save the output to a table,
   export the output to Latex code
 }
-\examples{
-data(mtcars)
-sum<-summary.numeric.mc(mtcars,latex=T)
-}
 \author{
   Hoai Tuong Nguyen
 }

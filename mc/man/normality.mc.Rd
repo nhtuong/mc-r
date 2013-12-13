@@ -17,10 +17,6 @@
 \description{
   Perform a normality test for variables
 }
-\examples{
-attach(mtcars)
-normality.mc(mtcars)
-}
 \author{
   Hoai Tuong Nguyen
 }

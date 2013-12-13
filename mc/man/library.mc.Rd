@@ -3,7 +3,7 @@
 \alias{library.mc}
 \title{Loading and Listing of Packages}
 \usage{
-  library.mc(pkg)
+  library.mc(pkg, repos = "cran")
 }
 \arguments{
   \item{pkg}{name of package}
@@ -13,9 +13,6 @@
 }
 \description{
   On-the-fly load or install a package
-}
-\examples{
-check.installed.mc("xtable")
 }
 \author{
   Hoai Tuong Nguyen
