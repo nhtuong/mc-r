@@ -45,11 +45,11 @@ Nutriomique Team: \url{http://www.nutriomique.org/}
   library.mc("xtable")
   
   #read a large file
-  data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
+  #data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=TRUE,sep=";",nrow=1000)
   
   #get statistics on the columns of a matrix/data.frame and export the results as table to Latex codes
   attach(mtcars)
-  sum<-summary.numeric.mc(mtcars,latex=T)
+  sum<-summary.numeric.mc(mtcars,latex=TRUE)
   
   #test the normality of a (list of) numeric variable(s)
   attach(mtcars)
@@ -59,31 +59,7 @@ Nutriomique Team: \url{http://www.nutriomique.org/}
   attach(mtcars)
   class.mc(mtcars)
 
-  #plot the correlation, add lowess line to plot and write the output
-  output.dir="../results"
-  attach(swiss)
-  reg.plot.mc(x=Fertility,y=Agriculture,
-              type="lowess",
-              pch=ifelse(swiss$Examination>10, 0, 1),         
-              subjects=as.vector(rownames(swiss)),
-              title="CORRELATION - LOWESS",
-              xlab="Fertility",ylab="Agriculture",
-              legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),
-              col=c("black","black")),
-              imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
-              pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))  
-  
 
-  #draw a boxplot for two classes, add results of t-test to plot, write the output
-  output.dir="../results"
-  attach(lung)
-  pdf(sprintf("%s/lung_factors_by_sex_boxplot.pdf",output.dir))
-  outfile<-sprintf("%s/lung_factors_by_sex_t-test.csv",output.dir)
-  par(mfrow = c(4, 4))
-  lapply(c(1:4,6:10),function(x) boxplot.class.mc(data=lung,x,
-                                                  class=lung$sex,
-                                                  xlab="Sex (0=Female, 1=Male)",
-                                                  outfile=outfile))
-  dev.off()
+
 
 }

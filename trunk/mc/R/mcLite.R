@@ -17,7 +17,7 @@ if(FALSE){
   library.mc("xtable")
   
   #read a large file
-  data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
+  #data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
   
   #get statistics on the columns of a matrix/data.frame and export the results as table to Latex codes
   attach(mtcars)
@@ -71,8 +71,6 @@ if(FALSE){
 #'@param pkg name of package
 #'@return A logical value indicating whether the package is installed
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'check.installed.mc("xtable")
 #'@seealso \code{\link[utils]{install.packages}}
 check.installed.mc<-function(pkg){
   return(is.element(pkg, installed.packages()[,1]))
@@ -89,8 +87,6 @@ check.installed.mc<-function(pkg){
 #'@param pkg name of package
 #'@return A list of attached packages
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'check.installed.mc("xtable")
 #'@seealso \code{\link[utils]{install.packages}}
 library.mc<-function(pkg,repos="cran"){
   if(!check.installed.mc(pkg)){
@@ -114,6 +110,7 @@ library.mc<-function(pkg,repos="cran"){
 
 
 #loading dependencies
+library.mc("corrplot")
 library.mc("bnlearn")
 library.mc("FunNet")
 library.mc("zoo")
@@ -130,7 +127,7 @@ library.mc("hgu95av2","bioc")
 library.mc("hgu95av2.db","bioc")
 library.mc("illuminaHumanv3.db","bioc")
 library.mc("GO.db","bioc")
-
+library.mc("sqldf")
 
 #'@name read.table.mc
 #'@aliases read.table.mc
@@ -144,9 +141,6 @@ library.mc("GO.db","bioc")
 #'@param nrow number of rows
 #'@return A data frame (\code{\link[base]{data.frame}}) containing a representation of the data in the file
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'library(mc)
-#'data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
 #'@seealso \code{\link[utils]{read.table}}
 read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
   #read 5 first rows to get class names of column
@@ -170,9 +164,6 @@ read.table.mc<-function(file,header=FALSE,sep="",nrow=-1){
 #'@param latex a logical value indicating whether output to latex is called
 #'@return Table of of the value returned by summary (and output Latex code if parameter 'latex' is TRUE)
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'data(mtcars)
-#'sum<-summary.numeric.mc(mtcars,latex=T)
 #'@seealso \code{\link[base]{summary}}
 summary.numeric.mc<-function(object,latex=FALSE){
   #get classes of columns
@@ -212,9 +203,6 @@ summary.numeric.mc<-function(object,latex=FALSE){
 #'@param alpha p-value threshold
 #'@return logical value indicating whether variable is normally distributed
 #'@author Hoai Tuong Nguyen
-#'@examples
-#' attach(mtcars)
-#' normality.mc(mtcars)
 normality.mc<-function(m,alpha=0.05){
   if (class(m)=="data.frame" || class(m)=="matrix")
     return(sapply(1:ncol(m), function(x) shapiro.test(m[,x])$p.value<=alpha))
@@ -232,9 +220,6 @@ normality.mc<-function(m,alpha=0.05){
 #'@param variable (list, matrix, data frame...)
 #'@return class of variables or of columns of matrix/data frame
 #'@author Hoai Tuong Nguyen
-#'@examples
-#' attach(mtcars)
-#' class.mc(mtcars)
 class.mc<-function(m){
   if (class(m)=="data.frame" || class(m)=="matrix")
     return(sapply(1:ncol(m),function(x) class(m[,x])))
@@ -262,18 +247,6 @@ class.mc<-function(m){
 #'@param imgfile image output filename
 #'@param pointsfile points output filename
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'output.dir="../results"
-#'attach(swiss)
-#'reg.plot.mc(Fertility,Agriculture,
-#'            type="lowess",
-#'            pch=ifelse(swiss$Examination>10, 0, 1),         
-#'            subjects=as.vector(rownames(swiss)),
-#'            title="CORRELATION - LOWESS",
-#'            xlab="Fertility",ylab="Agriculture",
-#'            legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),col=c("black","black")),
-#'            imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
-#'            pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))
 reg.plot.mc<-function(x,y,separator=NULL,type="none",quantile="outter",arrows=0,pch,subjects=NULL,title="CORRELATION",xlab="X",ylab="Y",col,legend.topleft,legend.topright,legend.bottomleft,legend.bottomright,imgfile=NULL,pointsfile=NULL){
   
   source("http://www.r-statistics.com/wp-content/uploads/2010/04/Quantile.loess_.r.txt")
@@ -457,18 +430,6 @@ reg.plot.mc<-function(x,y,separator=NULL,type="none",quantile="outter",arrows=0,
 #'@param imgfile image output filename
 #'@param pointsfile points output filename
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'output.dir="../results"
-#'attach(swiss)
-#'risk.level.mc(Fertility,Agriculture,
-#'            type="lowess",
-#'            pch=ifelse(swiss$Examination>10, 0, 1),         
-#'            subjects=as.vector(rownames(swiss)),
-#'            title="CORRELATION - LOWESS",
-#'            xlab="Fertility",ylab="Agriculture",
-#'            legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),col=c("black","black")),
-#'            imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
-#'            pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))
 risk.level.mc<-function(x,y,type="lm",pch,subjects=NULL,title="CORRELATION",xlab="X",ylab="Y",col,legend.topleft,legend.topright,imgfile=NULL,pointsfile=NULL){
   
   #correlation
@@ -552,17 +513,6 @@ risk.level.mc<-function(x,y,type="lm",pch,subjects=NULL,title="CORRELATION",xlab
 #'@param class vector of classes
 #'@param outfile output filename
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'output.dir="../results"
-#'attach(lung)
-#'pdf(sprintf("%s/lung_factors_by_sex_boxplot.pdf",output.dir))
-#'outfile<-sprintf("%s/lung_factors_by_sex_t-test.csv",output.dir)
-#'par(mfrow = c(4, 4))
-#'lapply(c(1:4,6:10),function(x) boxplot.class.mc(data=lung,x,
-#'                                                class=lung$sex,
-#'                                                xlab="Sex (0=Female, 1=Male)",
-#'                                                outfile=outfile))
-#'dev.off()
 boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
   
   
@@ -588,9 +538,11 @@ boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
         t.res<-t.test(data[,x]~class,ylab=names(data)[x])
     else t.res<-wilcox.test(data[,x]~class,ylab=names(data)[x])
     
-    title(main=sprintf("t=%0.2f; p=%0.2e\n%s",t.res$statistic,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*","")))),cex=0.5)  
+    cor.res<-cor(data[,x],class,use="complete.obs")
     
-    out<-cbind(colnames(data)[x],t.res$statistic,t.res$p.value,
+    title(main=sprintf("t=%0.2f; r=%.3f; p=%0.2e\n%s",t.res$statistic,cor.res,t.res$p.value,ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*","")))),cex=0.5)  
+    
+    out<-cbind(colnames(data)[x],t.res$statistic,cor.res,t.res$p.value,
                ifelse(t.res$p.value<=0.001,"***",ifelse(t.res$p.value<=0.01 & t.res$p.value>0.001,"**",ifelse(t.res$p.value<=0.05 & t.res$p.value>0.01,"*",""))),
                shapiro.test(data[,x])$p.value<=0.05)
     
@@ -612,8 +564,6 @@ boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
 #'@param x a nominal vector
 #'@param y a nominal vector
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'yule.Q.mc(c(0,1,0,1,1,1,0),c(0,0,1,1,0,1,0))
 yule.Q.mc=function(x,y){(table(x,y)[1,1]*table(x,y)[2,2]-table(x,y)[1,2]*table(
   x,y)[2,1])/(table(x,y)[1,1]*table(x,y)[2,2]+table(x,y)[1,2]*table(x,y)[2,1])
 }
@@ -631,8 +581,6 @@ library.mc("samr","bioc")
 #'@param nperms number of permutations
 #'@param logged2 logical. Expression level has been transformed by logorith base 2
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 samt.mc<-function(df,label,nperms=100,logged2=T,type="Two class unpaired",seq=F){
   if(logged2)
     df<-log2(df)
@@ -672,8 +620,6 @@ samt.mc<-function(df,label,nperms=100,logged2=T,type="Two class unpaired",seq=F)
 #'@param nmax.perms number of maximum permutations
 #'@param logged2 logical. Expression level has been transformed by logorith base 2
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 samt.opt.mc<-function(df,label,nmax.perms=100, logged2=T,type="Two class unpaired",seq=F){
   if(logged2)
     df<-log2(df)
@@ -709,8 +655,6 @@ samt.opt.mc<-function(df,label,nmax.perms=100, logged2=T,type="Two class unpaire
 #'@param nmax.perms number of maximum permutations
 #'@param logged2 logical. Expression level has been transformed by logorith base 2
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 samr.opt.cluster.mc<-function(df,class,label=NULL,file,index,cluster,type="Two class unpaired",logged2=T,nmax.perms=200,seq=F){
   print(cluster)
   print(is.null(nrow(df)))
@@ -764,8 +708,6 @@ samr.opt.cluster.mc<-function(df,class,label=NULL,file,index,cluster,type="Two c
 #'@param df a microarray dataframe 
 #'@param rate percentage of acceptable non-missing values per gene
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 get.nona.mc<-function(df,rate){
   index.nona<-apply(df, 1, function(x) sum(is.na(x)))/ncol(df)<=(1 - rate/100)
   return(df[index.nona,])
@@ -782,8 +724,6 @@ get.nona.mc<-function(df,rate){
 #'@param x1,y1   coordinates of points to which to draw
 #'@param lab label to be added
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 addsigText.mc<-function(x0,y0,x1,y1,lab="",offset){
   arrows(x0=x0, y0=max(y0,y1)+offset, x1 = x1, y1 = max(y0,y1)+offset,code=0)
   text(x=mean(c(x0,x1)),y=max(y0,y1)+offset,label=lab,po=3,xpd=TRUE) 
@@ -804,8 +744,6 @@ addsigText.mc<-function(x0,y0,x1,y1,lab="",offset){
 #'@param ylab  a label for the y axis
 #'@param labels series of columns' names
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 barplotStar.mc<-function(df,title=" ",col=c("darkblue","red"),xlab="",ylab="",labels){
   barX <-barplot(df, 
                  ylim=c(0,max(df)+max(df)/5),
@@ -830,8 +768,6 @@ barplotStar.mc<-function(df,title=" ",col=c("darkblue","red"),xlab="",ylab="",la
 #'@param df  matrix of values of columns
 #'@param col color of highest value
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 heatmap.mc<-function(df,col){
   df.m <- melt(df)
   colnames(df.m)<-c("Name","variable","value")
@@ -843,7 +779,6 @@ heatmap.mc<-function(df,col){
 }
 
 
-
 #'@name FunNet.mc
 #'@aliases FunNet.mc
 #'@export FunNet.mc
@@ -851,22 +786,6 @@ heatmap.mc<-function(df,col){
 #'@title FunNet adapted version 
 #'@description FunNet adapted version with customized output filenames
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'  high.up.frame<-as.data.frame(read.table(sprintf("%s/%s.high.up.genes.txt",output.dir,fileprefix),sep="\t",header=F))
-#'  high.down.frame<-as.data.frame(read.table(sprintf("%s/%s.high.down.genes.txt",output.dir,fileprefix),sep="\t",header=F))
-#'
-#'FunNet.mc(org="HS", two.lists=TRUE, up.frame=high.up.frame, down.frame=high.down.frame,
-#'genes.frame=NULL, restrict=TRUE, ref.list=NULL, logged=FALSE,
-#'discriminant=TRUE, go.bp=TRUE, go.cc=TRUE, go.mf=TRUE, kegg=TRUE,
-#'annot.method="specificity", annot.details=TRUE,
-#'direct=FALSE, enriched=TRUE, fdr=NA, build.annot.net=TRUE,
-#'coexp.matrix=NULL, coexp.method="spearman", estimate.th=FALSE,
-#'hard.th=0.8, soft.th=NA, topological = FALSE, keep.sign=FALSE, level=1,
-#'annot.clust.method="umilds", annot.prox.measure="dynamical",
-#'test.recovery=FALSE, test.robust=FALSE, replace.annot=NA,
-#'build.gene.net=TRUE, gene.clust.method="hclust", gene.net.details=TRUE,
-#'gene.clusters=NA, alpha=0.05, RV=0.90, sigma=NA, keep.rdata=FALSE, zip=TRUE,fileprefix=sprintf("%s.high.genes","OK"))
-
 FunNet.mc<-function (wd = "", org = "hsa", two.lists = TRUE, up.frame = NULL, 
                      down.frame = NULL, genes.frame = NULL, restrict = FALSE, 
                      ref.list = NULL, logged = FALSE, discriminant = FALSE, go.bp = TRUE, 
@@ -1300,8 +1219,6 @@ FunNet.mc<-function (wd = "", org = "hsa", two.lists = TRUE, up.frame = NULL,
 #'@param t0  values of variable at t0
 #'@param tn  values of variable at tn
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 signs.mc<-function(t0,tn){
   delta<-tn-t0
   delta[delta<0]<-"-"
@@ -1322,8 +1239,6 @@ signs.mc<-function(t0,tn){
 #'@param y0  values of variable at y0
 #'@param yn  values of variable at yn
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 cause.mc<-function(x0,xn,y0,yn){
   signs.x<-signs.mc(x0,xn)
   signs.y<-signs.mc(y0,yn)  
@@ -1345,8 +1260,6 @@ cause.mc<-function(x0,xn,y0,yn){
 #'@param dbfile  actual DB
 #'@param record  new record
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 updateAnnot.mc<-function(dbfile,record){
   Annot.DB<-get(load(file=dbfile))
   colnames(record)<-c("PROBEID_ILMN","ENTREZID","SYMBOL","GENENAME")
@@ -1366,8 +1279,6 @@ updateAnnot.mc<-function(dbfile,record){
 #'@param data dataframe
 #'@param n  number of sample
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'bn.bst.mc(asia,100)
 bn.bst.mc<-function(data,n){
   
   net.bst<-do.call(rbind,sapply(1:n,function(x){
@@ -1416,8 +1327,6 @@ bn.bst.mc<-function(data,n){
 #'@param data dataframe
 #'@param dec  decimal of number
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 as.numeric.mat.mc<-function(data,dec=","){
   rn<-rownames(data)
   cn<-colnames(data)
@@ -1437,9 +1346,6 @@ as.numeric.mat.mc<-function(data,dec=","){
 #'@param data dataframe
 #'@return a list with weight
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-#'
 mat2list.mc<-function(data,alpha=0){
   
   index.mc<-function(k,m){
@@ -1481,9 +1387,6 @@ mat2list.mc<-function(data,alpha=0){
 #'@param list dataframe
 #'@return a matrix
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-#'
 list2mat.mc<-function(list,nodes=NULL){
   if (is.null(nodes)){
     nodes<-union(unique(as.character(list[,1])),unique(as.character(list[,2])))
@@ -1533,8 +1436,7 @@ normalizeList.simple.mc<-function(list,alpha=0.5){
 #'@param data dataframe
 #'@param m  number of imputations
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
+
 impute.mc<-function(data,m){
   library.mc("Amelia",repos="http://r.iq.harvard.edu")
   idvars<-which(sapply(1:ncol(data),function(x) (sum(is.na(data[,x]))==0 | nlevels(as.factor(data[,x]))==1)))
@@ -1556,8 +1458,6 @@ impute.mc<-function(data,m){
 #'@param ecolors  colors of edges
 #'@param eweights  weights of edges
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 getIgraph.mc<-function(nodes,edges,ncolors,ecolors,eweights,directed=TRUE,layout=layout.kamada.kawai){
   library("igraph")
   g<-graph.data.frame(edges, directed=directed, vertices=cbind(nodes,nodes))  
@@ -1592,8 +1492,6 @@ getIgraph.mc<-function(nodes,edges,ncolors,ecolors,eweights,directed=TRUE,layout
 #'@param filepath  output file
 #'@return Gephi object
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 igraph2gephi.mc <- function(g, filepath="converted_graph.gexf")
 {
   require(igraph)
@@ -1648,8 +1546,6 @@ igraph2gephi.mc <- function(g, filepath="converted_graph.gexf")
 #'@param param  parameters of method
 #'@param dbfiles  path storing data files
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 updateKDB.mc<-function(newKDB.or,nodes=NULL){
   KDB.mat.or<-getKDB.mat.mc()
   KDB.or<-mat2list.mc(KDB.mat.or)
@@ -1668,8 +1564,6 @@ updateKDB.mc<-function(newKDB.or,nodes=NULL){
 #'@title Getting knowledge database
 #'@description Getting knowledge database
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 getKDB.mc<-function(){
   KDB<-get(load(file=sprintf("%s/INTEGRATION/KDB.RData",input.dir)))
 }
@@ -1680,8 +1574,6 @@ getKDB.mc<-function(){
 #'@title Saving knowledge database
 #'@description Getting knowledge database
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 saveKDB.mc<-function(){
   save(KDB,file=sprintf("%s/INTEGRATION/KDB.RData",input.dir))
 }
@@ -1692,8 +1584,6 @@ saveKDB.mc<-function(){
 #'@title Getting matrix of knowledge database
 #'@description Getting matrix of knowledge database
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
 getKDB.mat.mc<-function(){
   return(get(load(file=sprintf("%s/INTEGRATION/KDB.mat.RData",input.dir))))
 }
@@ -1709,13 +1599,6 @@ getKDB.mat.mc<-function(){
 #'@description Executing a query of Cipher language
 #'@param query
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'TBD
-#' Function for querying Neo4j from within R 
-#' from http://stackoverflow.com/questions/11188918/use-neo4j-with-r
-#' 
-#' start n=node(*) match n-[r?]->() delete r, n 
-#' sudo /etc/init.d/neo4j-service restart 
 neo4j.query.mc <- function(querystring) {
   library('bitops')
   library('RCurl')
@@ -1741,12 +1624,6 @@ neo4j.query.mc <- function(querystring) {
 #'@title Plotting scatterplot with error bar
 #'@description Plotting scatterplot with error bar
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'x = c(1:4)
-#'y = rnorm(4)
-#'df <- data.frame(x,y)
-#'err<- c(0.21,0.1,0.21,0.301)
-#'errplot.mc(x,y,err)
 errplot.mc<-function(x,y,err,xlab="x",ylab="y",title=""){
   library("Hmisc")
   df <- data.frame(x,y)
@@ -1761,11 +1638,22 @@ errplot.mc<-function(x,y,err,xlab="x",ylab="y",title=""){
 #'@title Plotting scatterplot with error bar
 #'@description Plotting scatterplot with error bar
 #'@author Hoai Tuong Nguyen
-#'@examples
-#'corplot.mc(iris[,1:4])
-library.mc("corrplot")
 corplot.mc<-function(df){
   dat.scaled<-scale(df,center=TRUE,scale=TRUE);
   corrplot(cor(dat.scaled), order = "hclust")
 }
 
+#'@aliases lsplot.mc
+#'@export lsplot.mc
+#'@docType methods
+#'@title Plotting linear separator
+#'@description Plotting linear separator
+#'@author Hoai Tuong Nguyen
+lsplot.mc<-function(x,y,labels,xlab="X",ylab="Y",title=""){
+  cols<-rep("blue",length(x))
+  cols[y>=fitted(lm(y~x))]<-"red"
+  plot(x,y,xlab=xlab,ylab=ylab,col=cols, pch=20,
+       main=title)
+  abline(lm(y~x))
+  text(x,y,labels=labels,pos=3,cex=.5)  
+}

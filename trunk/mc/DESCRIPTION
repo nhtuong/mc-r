@@ -6,6 +6,8 @@ Date: 2013-11-26
 Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
 Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
 Description: Statistical and datamining tools for omics data analysis.
+Depends: zoo, corrplot, Hmisc, xtable, gdata, ggplot2, samr, bnlearn, FunNet, hgu95av2.db, sqldf, GO.db, hgu95av2
+Lazyload: yes
 License: PPL
 Collate:
     'mcLite.R'

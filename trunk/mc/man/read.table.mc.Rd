@@ -32,10 +32,6 @@
 \description{
   Read a very large data file
 }
-\examples{
-library(mc)
-data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
-}
 \author{
   Hoai Tuong Nguyen
 }

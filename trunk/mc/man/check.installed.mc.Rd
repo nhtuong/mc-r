@@ -15,9 +15,6 @@
 \description{
   Check whether a packages is installed
 }
-\examples{
-check.installed.mc("xtable")
-}
 \author{
   Hoai Tuong Nguyen
 }
