@@ -1657,3 +1657,24 @@ lsplot.mc<-function(x,y,labels,xlab="X",ylab="Y",title=""){
   abline(lm(y~x))
   text(x,y,labels=labels,pos=3,cex=.5)  
 }
+
+
+
+#'@aliases weighted.var.mc
+#'@export weighted.var.mc
+#'@docType methods
+#'@title Calculate weighted variance
+#'@description Calculate weighted variance, original function posted by Dr. Gavin Simpson: https://stat.ethz.ch/pipermail/r-help/2008-July/168762.html
+#'@param x vector of values
+#'@param w weights of each values
+#'@param na.rm boolean, whether or not remove NAs
+#'@author David Dernoncourt
+weighted.var.mc = function(x,w=NA,na.rm=FALSE) {
+  if(is.na(w[1])) {w=rep(1,length(x));}
+  if(na.rm) {
+    w = w[i <- !is.na(x)];
+    x = x[i];
+  }
+  sum.w = sum(w);
+  return(sum(w*x^2) * sum.w - sum(w*x)^2) / (sum.w^2 - sum(w^2));
+}
