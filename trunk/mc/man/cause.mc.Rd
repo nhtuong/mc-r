@@ -3,7 +3,7 @@
 \alias{cause.mc}
 \title{Causality analysis}
 \usage{
-  cause.mc(x0, xn, y0, yn)
+cause.mc(x0, xn, y0, yn)
 }
 \arguments{
   \item{x0}{values of variable at x0}
@@ -15,9 +15,9 @@
   \item{yn}{values of variable at yn}
 }
 \description{
-  Causality analysis
+Causality analysis
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

@@ -3,7 +3,7 @@
 \alias{normality.mc}
 \title{Normality Test}
 \usage{
-  normality.mc(m, alpha = 0.05)
+normality.mc(m, alpha = 0.05)
 }
 \arguments{
   \item{m}{variable (list, matrix, data frame...)}
@@ -11,13 +11,13 @@
   \item{alpha}{p-value threshold}
 }
 \value{
-  logical value indicating whether variable is normally
-  distributed
+logical value indicating whether variable is normally
+distributed
 }
 \description{
-  Perform a normality test for variables
+Perform a normality test for variables
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

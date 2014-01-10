@@ -3,8 +3,8 @@
 \alias{samt.opt.mc}
 \title{Optimized version of samr}
 \usage{
-  samt.opt.mc(df, label, nmax.perms = 100, logged2 = T,
-    type = "Two class unpaired", seq = F)
+samt.opt.mc(df, label, nmax.perms = 100, logged2 = T,
+  type = "Two class unpaired", seq = F)
 }
 \arguments{
   \item{df}{a microarray dataframe}
@@ -17,10 +17,10 @@
   transformed by logorith base 2}
 }
 \description{
-  An optimized version of samr for gene differtiation
-  analysis
+An optimized version of samr for gene differtiation
+analysis
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

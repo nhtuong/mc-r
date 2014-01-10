@@ -3,9 +3,8 @@
 \alias{samr.opt.cluster.mc}
 \title{Optimized version of samr with clusters}
 \usage{
-  samr.opt.cluster.mc(df, class, label = NULL, file, index,
-    cluster, type = "Two class unpaired", logged2 = T,
-    nmax.perms = 200, seq = F)
+samr.opt.cluster.mc(df, class, label = NULL, file, index, cluster,
+  type = "Two class unpaired", logged2 = T, nmax.perms = 200, seq = F)
 }
 \arguments{
   \item{df}{a microarray dataframe}
@@ -18,10 +17,10 @@
   transformed by logorith base 2}
 }
 \description{
-  An optimized version of samr with cluster for gene
-  differtiation analysis
+An optimized version of samr with cluster for gene
+differtiation analysis
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

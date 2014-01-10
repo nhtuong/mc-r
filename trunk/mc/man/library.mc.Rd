@@ -3,21 +3,21 @@
 \alias{library.mc}
 \title{Loading and Listing of Packages}
 \usage{
-  library.mc(pkg, repos = "cran")
+library.mc(pkg, repos = "cran")
 }
 \arguments{
   \item{pkg}{name of package}
 }
 \value{
-  A list of attached packages
+A list of attached packages
 }
 \description{
-  On-the-fly load or install a package
+On-the-fly load or install a package
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 \seealso{
-  \code{\link[utils]{install.packages}}
+\code{\link[utils]{install.packages}}
 }
 

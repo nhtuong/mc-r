@@ -3,8 +3,8 @@
 \alias{getIgraph.mc}
 \title{Getting igraph object}
 \usage{
-  getIgraph.mc(nodes, edges, ncolors, ecolors, eweights,
-    directed = TRUE, layout = layout.kamada.kawai)
+getIgraph.mc(nodes, edges, ncolors, ecolors, eweights, directed = TRUE,
+  layout = layout.kamada.kawai)
 }
 \arguments{
   \item{nodes}{list of nodes}
@@ -18,9 +18,9 @@
   \item{eweights}{weights of edges}
 }
 \description{
-  Getting igraph object
+Getting igraph object
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

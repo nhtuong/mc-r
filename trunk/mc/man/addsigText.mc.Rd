@@ -3,7 +3,7 @@
 \alias{addsigText.mc}
 \title{Adding significant bar}
 \usage{
-  addsigText.mc(x0, y0, x1, y1, lab = "", offset)
+addsigText.mc(x0, y0, x1, y1, lab = "", offset)
 }
 \arguments{
   \item{x0,y0}{coordinates of points from which to draw}
@@ -13,9 +13,9 @@
   \item{lab}{label to be added}
 }
 \description{
-  Adding a significant bar to the barplot
+Adding a significant bar to the barplot
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

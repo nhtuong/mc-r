@@ -3,12 +3,12 @@
 \alias{getKDB.mat.mc}
 \title{Getting matrix of knowledge database}
 \usage{
-  getKDB.mat.mc()
+getKDB.mat.mc()
 }
 \description{
-  Getting matrix of knowledge database
+Getting matrix of knowledge database
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

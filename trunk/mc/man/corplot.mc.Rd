@@ -3,12 +3,12 @@
 \alias{corplot.mc}
 \title{Plotting scatterplot with error bar}
 \usage{
-  corplot.mc(df)
+corplot.mc(df)
 }
 \description{
-  Plotting scatterplot with error bar
+Plotting scatterplot with error bar
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

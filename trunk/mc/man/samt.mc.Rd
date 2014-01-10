@@ -3,8 +3,8 @@
 \alias{samt.mc}
 \title{Adapted version of samr}
 \usage{
-  samt.mc(df, label, nperms = 100, logged2 = T,
-    type = "Two class unpaired", seq = F)
+samt.mc(df, label, nperms = 100, logged2 = T, type = "Two class unpaired",
+  seq = F)
 }
 \arguments{
   \item{df}{a microarray dataframe}
@@ -17,10 +17,9 @@
   transformed by logorith base 2}
 }
 \description{
-  An adapted version of samr for gene differtiation
-  analysis
+An adapted version of samr for gene differtiation analysis
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

@@ -3,18 +3,18 @@
 \alias{class.mc}
 \title{Object Classes}
 \usage{
-  class.mc(m)
+class.mc(m)
 }
 \arguments{
   \item{variable}{(list, matrix, data frame...)}
 }
 \value{
-  class of variables or of columns of matrix/data frame
+class of variables or of columns of matrix/data frame
 }
 \description{
-  Get class of variable
+Get class of variable
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

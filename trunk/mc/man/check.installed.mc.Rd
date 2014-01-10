@@ -3,22 +3,21 @@
 \alias{check.installed.mc}
 \title{Checking package installation}
 \usage{
-  check.installed.mc(pkg)
+check.installed.mc(pkg)
 }
 \arguments{
   \item{pkg}{name of package}
 }
 \value{
-  A logical value indicating whether the package is
-  installed
+A logical value indicating whether the package is installed
 }
 \description{
-  Check whether a packages is installed
+Check whether a packages is installed
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 \seealso{
-  \code{\link[utils]{install.packages}}
+\code{\link[utils]{install.packages}}
 }
 
