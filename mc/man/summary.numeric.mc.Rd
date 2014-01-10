@@ -3,7 +3,7 @@
 \alias{summary.numeric.mc}
 \title{Object Summaries}
 \usage{
-  summary.numeric.mc(object, latex = FALSE)
+summary.numeric.mc(object, latex = FALSE)
 }
 \arguments{
   \item{object}{an object for which a summary is desired.}
@@ -12,17 +12,17 @@
   latex is called}
 }
 \value{
-  Table of of the value returned by summary (and output
-  Latex code if parameter 'latex' is TRUE)
+Table of of the value returned by summary (and output Latex
+code if parameter 'latex' is TRUE)
 }
 \description{
-  Summarize an numeric table, save the output to a table,
-  export the output to Latex code
+Summarize an numeric table, save the output to a table,
+export the output to Latex code
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 \seealso{
-  \code{\link[base]{summary}}
+\code{\link[base]{summary}}
 }
 

@@ -3,7 +3,7 @@
 \alias{impute.mc}
 \title{Imputing missing data}
 \usage{
-  impute.mc(data, m)
+\method{impute}{mc}(data, m)
 }
 \arguments{
   \item{data}{dataframe}
@@ -11,9 +11,9 @@
   \item{m}{number of imputations}
 }
 \description{
-  Imputing missing data
+Imputing missing data
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

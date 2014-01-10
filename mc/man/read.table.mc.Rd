@@ -3,7 +3,7 @@
 \alias{read.table.mc}
 \title{Data Input}
 \usage{
-  read.table.mc(file, header = FALSE, sep = "", nrow = -1)
+read.table.mc(file, header = FALSE, sep = "", nrow = -1)
 }
 \arguments{
   \item{file}{the name of the file which the data are to be
@@ -26,16 +26,16 @@
   \item{nrow}{number of rows}
 }
 \value{
-  A data frame (\code{\link[base]{data.frame}}) containing
-  a representation of the data in the file
+A data frame (\code{\link[base]{data.frame}}) containing a
+representation of the data in the file
 }
 \description{
-  Read a very large data file
+Read a very large data file
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 \seealso{
-  \code{\link[utils]{read.table}}
+\code{\link[utils]{read.table}}
 }
 

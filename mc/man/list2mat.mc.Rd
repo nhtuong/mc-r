@@ -3,18 +3,18 @@
 \alias{list2mat.mc}
 \title{Convert list to matrix}
 \usage{
-  list2mat.mc(list, nodes = NULL)
+list2mat.mc(list, nodes = NULL)
 }
 \arguments{
   \item{list}{dataframe}
 }
 \value{
-  a matrix
+a matrix
 }
 \description{
-  Convert list to matrix
+Convert list to matrix
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

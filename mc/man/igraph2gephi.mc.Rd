@@ -3,7 +3,7 @@
 \alias{igraph2gephi.mc}
 \title{Convertin igraph object to Gephi object}
 \usage{
-  igraph2gephi.mc(g, filepath = "converted_graph.gexf")
+igraph2gephi.mc(g, filepath = "converted_graph.gexf")
 }
 \arguments{
   \item{g}{igraph object}
@@ -11,12 +11,12 @@
   \item{filepath}{output file}
 }
 \value{
-  Gephi object
+Gephi object
 }
 \description{
-  Convertin igraph object to Gephi object
+Convertin igraph object to Gephi object
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

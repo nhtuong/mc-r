@@ -3,12 +3,12 @@
 \alias{saveKDB.mc}
 \title{Saving knowledge database}
 \usage{
-  saveKDB.mc()
+saveKDB.mc()
 }
 \description{
-  Getting knowledge database
+Getting knowledge database
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

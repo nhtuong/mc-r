@@ -3,12 +3,12 @@
 \alias{errplot.mc}
 \title{Plotting scatterplot with error bar}
 \usage{
-  errplot.mc(x, y, err, xlab = "x", ylab = "y", title = "")
+errplot.mc(x, y, err, xlab = "x", ylab = "y", title = "")
 }
 \description{
-  Plotting scatterplot with error bar
+Plotting scatterplot with error bar
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

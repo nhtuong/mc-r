@@ -3,12 +3,12 @@
 \alias{getKDB.mc}
 \title{Getting knowledge database}
 \usage{
-  getKDB.mc()
+getKDB.mc()
 }
 \description{
-  Getting knowledge database
+Getting knowledge database
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

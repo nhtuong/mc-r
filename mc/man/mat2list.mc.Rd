@@ -3,18 +3,18 @@
 \alias{mat2list.mc}
 \title{Convert matrix to list}
 \usage{
-  mat2list.mc(data, alpha = 0)
+mat2list.mc(data, alpha = 0)
 }
 \arguments{
   \item{data}{dataframe}
 }
 \value{
-  a list with weight
+a list with weight
 }
 \description{
-  Convert matrix to list
+Convert matrix to list
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

@@ -3,13 +3,12 @@
 \alias{lsplot.mc}
 \title{Plotting linear separator}
 \usage{
-  lsplot.mc(x, y, labels, xlab = "X", ylab = "Y",
-    title = "")
+lsplot.mc(x, y, labels, xlab = "X", ylab = "Y", title = "")
 }
 \description{
-  Plotting linear separator
+Plotting linear separator
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

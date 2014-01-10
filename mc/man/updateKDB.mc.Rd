@@ -3,7 +3,7 @@
 \alias{updateKDB.mc}
 \title{Updating knowledge database}
 \usage{
-  updateKDB.mc(newKDB.or, nodes = NULL)
+updateKDB.mc(newKDB.or, nodes = NULL)
 }
 \arguments{
   \item{arcs}{list of edges}
@@ -15,9 +15,9 @@
   \item{dbfiles}{path storing data files}
 }
 \description{
-  Updating knowledge database
+Updating knowledge database
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 

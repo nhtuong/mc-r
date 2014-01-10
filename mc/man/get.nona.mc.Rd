@@ -3,7 +3,7 @@
 \alias{get.nona.mc}
 \title{Filtering missing value genes}
 \usage{
-  get.nona.mc(df, rate)
+get.nona.mc(df, rate)
 }
 \arguments{
   \item{df}{a microarray dataframe}
@@ -12,9 +12,9 @@
   per gene}
 }
 \description{
-  Filtering missing value genes
+Filtering missing value genes
 }
 \author{
-  Hoai Tuong Nguyen
+Hoai Tuong Nguyen
 }
 
