@@ -1678,3 +1678,55 @@ weighted.var.mc = function(x,w=NA,na.rm=FALSE) {
   sum.w = sum(w);
   return(sum(w*x^2) * sum.w - sum(w*x)^2) / (sum.w^2 - sum(w^2));
 }
+
+
+#'@aliases stability.CW.mc
+#'@export stability.CW.mc
+#'@docType methods
+#'@title Calculate weighted consistency stability measure
+#'@description Calculate weighted consistency stability measure and various variants. Based on Somol 2010 "Evaluating Stability and Comparing Output of Feature Selectors that Optimize Feature Subset Cardinality" (doi:10.1109/tpami.2010.34)
+#'@param S selection matrix, 1 row  = 1 selection, 1 column = 1 variable. Value 0 if not selected, 1 if selected.
+#'@param type of stability measure. Cs: consistency. CW: weighted consistency. CWrel: relative weigthed consistency.
+#'@author David Dernoncourt
+stability.CW.mc = function(S,type='CWrel'){
+  # S: matrix containing one row per trained FS, with as many columns as features. 1 = feature is selected in this run, 0 = feature isn't selected
+  # type: what kind of score we want
+  validType=match(type,c('Cf','Cs','CW','CWrel','CWPR')); # http://stackoverflow.com/questions/1169248/r-function-for-testing-if-a-vector-contains-a-given-element
+  if(is.na(validType) || length(validType)!=1) {
+    type='CWrel';
+    warning('Invalid type provided. Defaulting to CWrel.');
+  }
+  
+  freqs=apply(S,2,sum); # get number of occurences of every feature
+  n=nrow(S); # get maximum occurence (= number of rows)
+  cardY=ncol(S); # get number of features (= number of cols)
+  
+  # compute C(f) for all features
+  Cf=(freqs-1)/(n-1);
+  Cf[freqs==0]=0; # fixes the negative consistensy of features never selected
+  if(type=='Cf') {return(Cf);}
+  
+  if(type=='Cs'){
+    X=rep(0,cardY); X[freqs>0]=1; # subset of Y representing all features that appear anywhere in S
+    cardX=sum(X); # cardinality of X
+    Cs=1/cardX*sum(Cf); # that's C(S) already! :)
+    return(Cs);
+  }
+  
+  N=sum(S); # total number of occurences of any feature in S
+  if(type=='CW'){
+    CW=sum(freqs/N*(freqs-1)/(n-1));
+    return(CW);
+  }
+  
+  D=N%%cardY; # D = N mod |Y|
+  H=N%%n;
+  
+  if(type=='CWrel'){
+    CWrel=(cardY*(N-D+sum(freqs*(freqs-1)))-N^2+D^2) / (cardY*(H^2+n*(N-H)-D)-N^2+D^2);
+    return(CWrel);
+  }
+  
+  CWPR=(cardY*(N-D+sum(freqs*(freqs-1)))-N^2+D^2) / (cardY*(N*(n-1)+N-D)-N^2+D^2);
+  return(CWPR);
+}
