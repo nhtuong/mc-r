@@ -1,7 +1,7 @@
 \docType{methods}
 \name{artif.data.gen.model1.mc}
 \alias{artif.data.gen.model1.mc}
-\title{Generate a vector of means}
+\title{Generate simple artificial data}
 \usage{
 artif.data.gen.model1.mc(N = 8, D = 5, mu = 1, m = length(mu),
   sigma = 1)
