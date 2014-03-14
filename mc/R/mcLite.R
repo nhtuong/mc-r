@@ -1795,7 +1795,7 @@ artif.data.gen.mu.mc = function (m,style="linear",BayesError=NA,styleParam=2,D=m
 #'@aliases artif.data.gen.model1.mc
 #'@export artif.data.gen.model1.mc
 #'@docType methods
-#'@title Generate a vector of means
+#'@title Generate simple artificial data
 #'@description Generate simple artificial data: model 1: in one class µ, in the other class -µ
 #'@param N Number of observations (rows)
 #'@param D Number of variables (columns)
@@ -1823,4 +1823,35 @@ artif.data.gen.model1.mc = function(N=8,D=5,mu=1,m=length(mu),sigma=1){
   data[(C1n+1):N,1:m]=C2vars;
   
   return(list(X=data,y=class));
+}
+
+#'@aliases artif.data.gen.model4.mc
+#'@export artif.data.gen.model4.mc
+#'@docType methods
+#'@title Generate simple artificial data with correlation
+#'@description Generate simple artificial data with correlation: model 4: like model 1 but with blocks of correlated variables
+#'@param N Number of observations (rows)
+#'@param D Number of variables (columns)
+#'@param mu µ for C1, -µ for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
+#'@param m Number of relevant variables (in case you feel like trimming mu here)
+#'@param sigma Standard deviation.
+#'@param corBlockSize Size of correlated variables blocks
+#'@param corStrength Correlation between correlated variables (within blocks)
+#'@author David Dernoncourt
+artif.data.gen.model4.mc = function(N=8,D=5,mu=1,m=length(mu),sigma=1,corBlockSize=2,corStrength=0.5){
+  nBlocks=floor(D/corBlockSize);
+  corMatrix=diag(c(rep(1-corStrength,floor(D/corBlockSize)*corBlockSize),rep(1.0,D-floor(D/corBlockSize)*corBlockSize)));
+  
+  data = artif.data.gen.model1.mc(N=N,D=D,m=m,sigma=sigma,mu=mu);
+  
+  for(i in 0:(nBlocks-1)) {
+    corMatrix[(i*corBlockSize+1):((i+1)*corBlockSize),(i*corBlockSize+1):((i+1)*corBlockSize)]=
+      corMatrix[(i*corBlockSize+1):((i+1)*corBlockSize),(i*corBlockSize+1):((i+1)*corBlockSize)]+
+      matrix(corStrength,nrow=corBlockSize,ncol=corBlockSize);
+  }
+  cholMat=chol(corMatrix);
+  
+  data$X=data$X%*%cholMat;
+  
+  return(data);
 }
