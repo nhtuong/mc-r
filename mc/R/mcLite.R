@@ -1730,3 +1730,97 @@ stability.CW.mc = function(S,type='CWrel'){
   CWPR=(cardY*(N-D+sum(freqs*(freqs-1)))-N^2+D^2) / (cardY*(N*(n-1)+N-D)-N^2+D^2);
   return(CWPR);
 }
+
+
+#'@aliases artif.data.getDeltaForBE.mc
+#'@export artif.data.getDeltaForBE.mc
+#'@docType methods
+#'@title Calculate coefficient to obtain target Bayes error
+#'@description Calculate a delta coefficient so as to obtain target Bayes error when using delta*mu to build artificial data (assuming variance=1)
+#'@param wanted_error Bayes error we want (proportion, between 0 and 1)
+#'@param mus A vector of means for separation (one class would have delta*mus, the other -delta*mus)
+#'@author David Dernoncourt
+artif.data.getDeltaForBE.mc = function(wanted_error,mus){
+  targetZ=qnorm(1-wanted_error);
+  delta=targetZ/sqrt(t(mus)%*%mus);
+  return(as.double(delta));
+}
+
+#'@aliases artif.data.getBE.mc
+#'@export artif.data.getBE.mc
+#'@docType methods
+#'@title Calculate Bayes error from a vector of means
+#'@description Calculate Bayes error obtained when using vector of means delta*mu to build artificial data (assuming variance=1)
+#'@param mus A vector of means for separation (one class would have mus, the other -mus)
+#'@author David Dernoncourt
+artif.data.getBE.mc = function(mus){
+  return(as.double(1-pnorm(1*sqrt(t(mus)%*%mus))));
+}
+
+#'@aliases artif.data.gen.mu.mc
+#'@export artif.data.gen.mu.mc
+#'@docType methods
+#'@title Generate a vector of means
+#'@description Generate a vector of means appropriate to build artificial data
+#'@param m How many non-zero variables
+#'@param style Distribution for drawing the mus (beware, some of those are weird)
+#'@param BayesError Bayes error we want (proportion, between 0 and 1). If you leave NA, no adjustment will be made and you can end up with quite extreme mu values
+#'@param styleParam Optional parameter for style. Exponent for style exponential and linear. Useless for unique and uniform.
+#'@param D Number of variables. Make >m if you want some variables with µ==0
+#'@author David Dernoncourt
+artif.data.gen.mu.mc = function (m,style="linear",BayesError=NA,styleParam=2,D=m){
+  validStyle=match(style,c("unique","uniform","exponential","linear"));
+  if(is.na(validStyle) || length(validStyle)!=1) stop("Invalid style");
+  
+  if(style=="unique") {mu=rep(1,m);}
+  else if(style=="uniform") {mu=1:m;}
+  else if(style=="exponential") {
+    mu=rexp(m,1);mu=mu^styleParam; # random mus from exponential distribution # curve(dexp(x,1), 0, 5,xlab="µ",ylab="Proba density")
+    if(styleParam<1){warning("styleParam should be >=1 when using exponential distrib")}
+  }
+  else if(style=="linear") {
+    mu=sample(0:1000000,size=m,replace=TRUE,prob=seq(1,0,length=1000001));mu=(mu/1000000)^styleParam;
+    if(styleParam<1){warning("styleParam should be >=1 when using linear distrib")}
+  }
+  
+  mu=sort(mu,decreasing=TRUE); # always return sorted mu, this is required by lots of things so disabling this will break stuff
+  
+  if(!is.na(BayesError)) {mu=mu*artif.data.getDeltaForBE.mc(BayesError,mu);}
+  
+  if(D>m) {mu=c(mu,rep(0,D-m));}
+  
+  return(mu);
+}
+
+#'@aliases artif.data.gen.model1.mc
+#'@export artif.data.gen.model1.mc
+#'@docType methods
+#'@title Generate a vector of means
+#'@description Generate simple artificial data: model 1: in one class µ, in the other class -µ
+#'@param N Number of observations (rows)
+#'@param D Number of variables (columns)
+#'@param mu µ for C1, -µ for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
+#'@param m Number of relevant variables (in case you feel like trimming mu here)
+#'@param sigma Standard deviation. You'll probably want to leave this to 1 if you care about the Bayes Error of artif.data.gen.mu.mc()
+#'@author David Dernoncourt
+artif.data.gen.model1.mc = function(N=8,D=5,mu=1,m=length(mu),sigma=1){
+  # prevents a mu longer that doesn't match number of variables (unless mu is a single value)
+  if(length(mu)>m){length(mu)=m; cat("Warning: mu was stripped because it was longer than m");}
+  else if(length(mu)<m && length(mu)>1){stop("mu length > 1 and doesn't match m yet is smaller");}
+  data = matrix(rnorm((N*D),mean=0,sd=sigma), nr=N, nc=D);
+  
+  C1n=round(N/2); # number of observations in class C1
+  #C1vars = matrix(rnorm(C1n*m,mean=mu,sd=sigma), nr=C1n, nc=m);
+  C1vars = t(matrix(rnorm(C1n*m,mean=mu,sd=sigma), nr=m, nc=C1n));
+  
+  C2n=N-C1n; # number of observations in class C2
+  #C2vars = matrix(rnorm(C2n*m,mean=-mu,sd=sigma), nr=C2n, nc=m);
+  C2vars = t(matrix(rnorm(C2n*m,mean=-mu,sd=sigma), nr=m, nc=C2n));
+  
+  class = c(rep(1,C1n),rep(0,C2n));
+  
+  data[1:C1n,1:m]=C1vars;
+  data[(C1n+1):N,1:m]=C2vars;
+  
+  return(list(X=data,y=class));
+}
