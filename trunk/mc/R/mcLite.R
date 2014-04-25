@@ -1,9 +1,9 @@
 #Package: mc
 #Title: Commonly used functions for Nutriomics Team (INSERM U872)
-#Version: 1.0
-#Date: 2013-11-26
-#Author: Aurelie Cotillard, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
-#Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>
+#Version: 1.1
+#Date: 2014-04-25
+#Author: Aurelie Cotillard, David Dernoncourt, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
+#Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>, David Dernoncourt <me@daviddernoncourt.com>
 #Description: Statistical and datamining tools for omics data analysis.
 #License: PPL
 
@@ -102,10 +102,10 @@ library.mc<-function(pkg,repos="cran"){
     
     
   }
-
+  
   library(pkg,character.only=TRUE)
   
-
+  
 }
 
 
@@ -295,7 +295,7 @@ reg.plot.mc<-function(x,y,separator=NULL,type="none",quantile="outter",arrows=0,
         fitted<-separator[2]*x+separator[1]
         up<-which(y>fitted)
       }
-
+      
     } else {
       
       lmlow<-rq(y ~ x, tau = 0.25)
@@ -336,65 +336,65 @@ reg.plot.mc<-function(x,y,separator=NULL,type="none",quantile="outter",arrows=0,
     col.class<-as.numeric(col.class)
     
     
-  rgc<- cor(p.class,col.class,use="complete.obs")
-
-  
-  #main plot
-  plot(x,y,pch=pch,main=sprintf("%s\n%s vs %s \nr.idx=%0.4f; rho.idx=%0.4f; r.gc=%0.4f",title,ylab,xlab,r,rho,rgc),xlab=xlab,ylab=ylab,col=col,cex=0.4)
-  
-  if (type=="lm" & !is.null(lmlow))
-    abline(lmlow,col="blue",lty = 2)
-  
-  if (type=="lm" & !is.null(lmup))
-    abline(lmup,col="green",lty = 2)
-  
-  if (type=="lowess" & !is.null(lmlow))
-    points(lmlow$y.loess ~ lmlow$x, type = "l", col = "blue")
-  
-  if (type=="lowess" & !is.null(lmup))
-    points(lmup$y.loess ~ lmup$x, type = "l", col = "green")
-  
-  if (type=="lm"){
-    if (is.null(separator))
-      abline(lm)
-    else abline(separator)
-  }
+    rgc<- cor(p.class,col.class,use="complete.obs")
     
-  if (type=="lowess")
-    lines(lw,col=3)
-  
-  
-  coltxt=rep("black",length(x),)
-  coltxt[inter]<-"red"
-  #labels
-  text(x, y, subjects, cex=0.25,pos=1,offset=0.2,col=coltxt)
-  
-  
-  if (arrows>0){
-    nrow<-length(x)/(arrows+1)
-    s<-1:nrow
-    iter<-arrows
-    while (iter>0){
-      #arrows(x[s], y[s], x[s+nrow], y[s+nrow], col= ifelse(y[s]>y[s+nrow],"blue","red"),length=0.03)
-      arrows(x[s], y[s], x[s+nrow], y[s+nrow], col= iter+20,length=0.03)
-      s<-s+nrow
-      iter<-iter-1
+    
+    #main plot
+    plot(x,y,pch=pch,main=sprintf("%s\n%s vs %s \nr.idx=%0.4f; rho.idx=%0.4f; r.gc=%0.4f",title,ylab,xlab,r,rho,rgc),xlab=xlab,ylab=ylab,col=col,cex=0.4)
+    
+    if (type=="lm" & !is.null(lmlow))
+      abline(lmlow,col="blue",lty = 2)
+    
+    if (type=="lm" & !is.null(lmup))
+      abline(lmup,col="green",lty = 2)
+    
+    if (type=="lowess" & !is.null(lmlow))
+      points(lmlow$y.loess ~ lmlow$x, type = "l", col = "blue")
+    
+    if (type=="lowess" & !is.null(lmup))
+      points(lmup$y.loess ~ lmup$x, type = "l", col = "green")
+    
+    if (type=="lm"){
+      if (is.null(separator))
+        abline(lm)
+      else abline(separator)
     }
+    
+    if (type=="lowess")
+      lines(lw,col=3)
+    
+    
+    coltxt=rep("black",length(x),)
+    coltxt[inter]<-"red"
+    #labels
+    text(x, y, subjects, cex=0.25,pos=1,offset=0.2,col=coltxt)
+    
+    
+    if (arrows>0){
+      nrow<-length(x)/(arrows+1)
+      s<-1:nrow
+      iter<-arrows
+      while (iter>0){
+        #arrows(x[s], y[s], x[s+nrow], y[s+nrow], col= ifelse(y[s]>y[s+nrow],"blue","red"),length=0.03)
+        arrows(x[s], y[s], x[s+nrow], y[s+nrow], col= iter+20,length=0.03)
+        s<-s+nrow
+        iter<-iter-1
+      }
       
-  }
-  
-  
-  #Legend  
-  if (!missing(legend.topleft))
-    legend("topleft", title=legend.topleft$title,pch=legend.topleft$pch, legend = legend.topleft$label, col = legend.topleft$col, cex=0.4)
-  if (!missing(legend.topright))
-    legend("topright", title=legend.topright$title,pch=legend.topright$pch, legend = legend.topright$label, col = legend.topright$col, cex=0.4)
-  if (!missing(legend.bottomleft))
-    legend("bottomleft", title=legend.topleft$title,pch=legend.bottomleft$pch, legend = legend.bottomleft$label, col = legend.bottomleft$col, cex=0.4)
-  if (!missing(legend.bottomright))
-    legend("bottomright", title=legend.bottomright$title,pch=legend.bottomright$pch, legend = legend.bottomright$label, col = legend.bottomright$col, cex=0.4)
-  
-
+    }
+    
+    
+    #Legend  
+    if (!missing(legend.topleft))
+      legend("topleft", title=legend.topleft$title,pch=legend.topleft$pch, legend = legend.topleft$label, col = legend.topleft$col, cex=0.4)
+    if (!missing(legend.topright))
+      legend("topright", title=legend.topright$title,pch=legend.topright$pch, legend = legend.topright$label, col = legend.topright$col, cex=0.4)
+    if (!missing(legend.bottomleft))
+      legend("bottomleft", title=legend.topleft$title,pch=legend.bottomleft$pch, legend = legend.bottomleft$label, col = legend.bottomleft$col, cex=0.4)
+    if (!missing(legend.bottomright))
+      legend("bottomright", title=legend.bottomright$title,pch=legend.bottomright$pch, legend = legend.bottomright$label, col = legend.bottomright$col, cex=0.4)
+    
+    
     
     if (!missing(subjects))
       write.table(rbind(c("Name",xlab,ylab,"Levels"),cbind(subjects,x,y,p)),file=pointsfile,col.names=F,row.names=F,sep=";",quote=F)
@@ -525,7 +525,7 @@ boxplot.class.mc<-function(data,x,type="auto",class,xlab,ylab,outfile=NULL){
   print(data[,x])
   print(nskip1)
   print(nlevels(as.factor(data[,x])))
-
+  
   if (!is.na(data[,x]) & nskip1 & (nlevels(as.factor(data[,x]))>1)){
     
     boxplot(data[,x]~class,ylab=ylab,xlab=xlab) 
@@ -1855,3 +1855,25 @@ artif.data.gen.model4.mc = function(N=8,D=5,mu=1,m=length(mu),sigma=1,corBlockSi
   
   return(data);
 }
+
+
+#'@aliases beeboxplot.mc
+#'@export beeboxplot.mc
+#'@docType methods
+#'@title Plotting barplot with data points
+#'@description Plotting barplot with data points
+#'@author Hoai Tuong Nguyen
+library.mc("beeswarm")
+beeboxplot.mc<-function(x,class,xlab="",ylab="",main="",col=4,pch=16){
+  boxplot(x ~ class, 
+          outline = TRUE,     ## avoid double-plotting outliers, if any
+          main = main,
+          xlab=xlab,
+          ylab=ylab)
+  beeswarm(x ~ class, 
+           col = col, pch = pch, add = TRUE)
+}
+
+
+
+
