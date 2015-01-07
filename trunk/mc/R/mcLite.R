@@ -112,7 +112,7 @@ library.mc<-function(pkg,repos="cran"){
 #loading dependencies
 library.mc("corrplot")
 library.mc("bnlearn")
-library.mc("FunNet")
+#library.mc("FunNet")
 library.mc("zoo")
 library.mc("Hmisc")
 library.mc("quantreg")
