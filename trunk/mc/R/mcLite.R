@@ -1,66 +1,11 @@
 #Package: mc
-#Title: Commonly used functions for Nutriomics Team (INSERM U872)
-#Version: 1.1
-#Date: 2014-04-25
-#Author: Aurelie Cotillard, David Dernoncourt, Edi Prifti, Hoai Tuong Nguyen (A-Z order)
+#Title: Omics Data Analysis
+#Version: 1.0
+#Date: 2014-07-25
+#Author: Hoai Tuong Nguyen, David Dernoncourt
 #Maintainer: Hoai Tuong Nguyen <hoai-tuong.nguyen@inserm.fr>, David Dernoncourt <me@daviddernoncourt.com>
 #Description: Statistical and datamining tools for omics data analysis.
-#License: PPL
-
-#Examples
-if(FALSE){
-  
-  #load "mc" package
-  library(mc)
-  
-  #load "xtable" package, automatically install the package if it does not exist, then load it
-  library.mc("xtable")
-  
-  #read a large file
-  #data<-read.table.mc("http://statistics.vn/data/doesgenes.txt",header=T,sep=";",nrow=1000)
-  
-  #get statistics on the columns of a matrix/data.frame and export the results as table to Latex codes
-  attach(mtcars)
-  sum<-summary.numeric.mc(mtcars,latex=T)
-  
-  #test the normality of a (list of) numeric variable(s)
-  attach(mtcars)
-  normality.mc(mtcars)
-  
-  #get class type for a (list of) variable(s)
-  attach(mtcars)
-  class.mc(mtcars)
-  
-  #plot the correlation, add lowess line to plot and write the output
-  output.dir="../results"
-  attach(swiss)
-  reg.plot.mc(Fertility,Agriculture,
-              type="lowess",
-              pch=ifelse(swiss$Examination>10, 0, 1),         
-              subjects=as.vector(rownames(swiss)),
-              title="CORRELATION - LOWESS",
-              xlab="Fertility",ylab="Agriculture",
-              legend.topright=list(title="SHAPE",pch=c(1,0),label=c("Examination>10","Examination<=10"),
-                                   col=c("black","black")),
-              imgfile=sprintf("%s/lw_swiss-Fertility-Agriculture.pdf",output.dir),
-              pointsfile=sprintf("%s/lw_swiss-Fertility-Agriculture.csv",output.dir))  
-  
-  #draw a boxplot for two classes, add results of t-test to plot, write the output
-  output.dir="../results"
-  attach(lung)
-  pdf(sprintf("%s/lung_factors_by_sex_boxplot.pdf",output.dir))
-  outfile<-sprintf("%s/lung_factors_by_sex_t-test.csv",output.dir)
-  par(mfrow = c(4, 4))
-  lapply(c(1:4,6:10),function(x) boxplot.class.mc(data=lung,x,
-                                                  class=lung$sex,
-                                                  xlab="Sex (0=Female, 1=Male)",
-                                                  outfile=outfile))
-  dev.off()
-  
-  
-}
-
-
+#License: GPL
 
 #'@name check.installed.mc
 #'@aliases check.installed.mc
@@ -88,7 +33,7 @@ check.installed.mc<-function(pkg){
 #'@return A list of attached packages
 #'@author Hoai Tuong Nguyen
 #'@seealso \code{\link[utils]{install.packages}}
-library.mc<-function(pkg,repos="cran"){
+library.mc<-function(pkg,repos="bioc"){
   if(!check.installed.mc(pkg)){
     
     if (repos=="bioc"){
@@ -112,7 +57,7 @@ library.mc<-function(pkg,repos="cran"){
 #loading dependencies
 library.mc("corrplot")
 library.mc("bnlearn")
-#library.mc("FunNet")
+library.mc("FunNet")
 library.mc("zoo")
 library.mc("Hmisc")
 library.mc("quantreg")
@@ -128,6 +73,8 @@ library.mc("hgu95av2.db","bioc")
 library.mc("illuminaHumanv3.db","bioc")
 library.mc("GO.db","bioc")
 library.mc("sqldf")
+library.mc("igraph")
+library.mc("RCytoscape")
 
 #'@name read.table.mc
 #'@aliases read.table.mc
@@ -1766,7 +1713,7 @@ artif.data.getBE.mc = function(mus){
 #'@param style Distribution for drawing the mus (beware, some of those are weird)
 #'@param BayesError Bayes error we want (proportion, between 0 and 1). If you leave NA, no adjustment will be made and you can end up with quite extreme mu values
 #'@param styleParam Optional parameter for style. Exponent for style exponential and linear. Useless for unique and uniform.
-#'@param D Number of variables. Make >m if you want some variables with µ==0
+#'@param D Number of variables. Make >m if you want some variables with ?==0
 #'@author David Dernoncourt
 artif.data.gen.mu.mc = function (m,style="linear",BayesError=NA,styleParam=2,D=m){
   validStyle=match(style,c("unique","uniform","exponential","linear"));
@@ -1775,7 +1722,7 @@ artif.data.gen.mu.mc = function (m,style="linear",BayesError=NA,styleParam=2,D=m
   if(style=="unique") {mu=rep(1,m);}
   else if(style=="uniform") {mu=1:m;}
   else if(style=="exponential") {
-    mu=rexp(m,1);mu=mu^styleParam; # random mus from exponential distribution # curve(dexp(x,1), 0, 5,xlab="µ",ylab="Proba density")
+    mu=rexp(m,1);mu=mu^styleParam; # random mus from exponential distribution # curve(dexp(x,1), 0, 5,xlab="?",ylab="Proba density")
     if(styleParam<1){warning("styleParam should be >=1 when using exponential distrib")}
   }
   else if(style=="linear") {
@@ -1796,10 +1743,10 @@ artif.data.gen.mu.mc = function (m,style="linear",BayesError=NA,styleParam=2,D=m
 #'@export artif.data.gen.model1.mc
 #'@docType methods
 #'@title Generate simple artificial data
-#'@description Generate simple artificial data: model 1: in one class µ, in the other class -µ
+#'@description Generate simple artificial data: model 1: in one class ?, in the other class -?
 #'@param N Number of observations (rows)
 #'@param D Number of variables (columns)
-#'@param mu µ for C1, -µ for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
+#'@param mu ? for C1, -? for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
 #'@param m Number of relevant variables (in case you feel like trimming mu here)
 #'@param sigma Standard deviation. You'll probably want to leave this to 1 if you care about the Bayes Error of artif.data.gen.mu.mc()
 #'@author David Dernoncourt
@@ -1832,7 +1779,7 @@ artif.data.gen.model1.mc = function(N=8,D=5,mu=1,m=length(mu),sigma=1){
 #'@description Generate simple artificial data with correlation: model 4: like model 1 but with blocks of correlated variables
 #'@param N Number of observations (rows)
 #'@param D Number of variables (columns)
-#'@param mu µ for C1, -µ for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
+#'@param mu ? for C1, -? for C2. NB: can (should!) be a vector, typically the output of artif.data.gen.mu.mc().
 #'@param m Number of relevant variables (in case you feel like trimming mu here)
 #'@param sigma Standard deviation.
 #'@param corBlockSize Size of correlated variables blocks
@@ -1877,3 +1824,941 @@ beeboxplot.mc<-function(x,class,xlab="",ylab="",main="",col=4,pch=16){
 
 
 
+
+
+#'@aliases getMultilayerNet.mc
+#'@export getMultilayerNet.mc
+#'@docType methods
+#'@title Creating multilayer networks
+#'@description Creating multilayer networks
+#'@author Hoai Tuong Nguyen
+getMultilayerNet.mc<-function(gl,offset.x,offset.y){
+  
+  g<-gl[which.max(sapply(1:length(gl), function(x) length(unlist(edgeL(gl[[x]])))))][[1]]
+  
+  #  create a CytoscapeWindow, after first making sure that no prior window of the same name
+  #  name exists already.  (CytoscapeConnections are cheap; create them whenever you need them.)
+  cy = CytoscapeConnection()
+  window.title = 'vig1'
+  if (window.title %in% as.character (getWindowList (cy)))
+    deleteWindow (cy, window.title)
+  cw = new.CytoscapeWindow (window.title, g)
+  displayGraph (cw)
+  #layoutNetwork(cw, 'jgraph-spring')
+  layoutNetwork(cw, 'force-directed')
+  
+  pos<-getNodePosition (cw, nodes(g))
+  
+  
+  g<-gl[[1]]
+  
+  nodes.list<-list()    
+  nodes.list[[1]]<-nodes(g)
+  
+  for (i in 2:length(gl)){
+    #g.list[i]<-gl[[i]]
+    nodes.list[[i]]<-paste(nodes.list[[1]],"_",i,sep="")
+    g<-addNode(nodes.list[[i]],g)
+    g<-addEdge(nodes.list[[i-1]], nodes.list[[i]], g,c(rep(0,length(nodes.list[[i]]))))  
+    igi <- igraph.from.graphNEL(gl[[i]])
+    eli<-get.edgelist(igi)
+    g<- addEdge(paste(eli[,1],"_",i,sep=""), paste(eli[,2],"_",i,sep=""), g)  
+  }
+  
+  
+  
+  
+  #   g.i<-igraph.from.graphNEL(g)
+  # 
+  #   V(g.i)$shape<-c(V(g1.i)$shape,V(g2.i)$shape,V(g3.i)$shape)  
+  #   V(g.i)$color<-c(V(g1.i)$color,V(g2.i)$color,V(g3.i)$color)  
+  #   E(g.i)$label<-c(E(g1.i)$label,rep("",length(nodes1)),rep("",length(nodes1)),E(g2.i)$label,E(g3.i)$label)
+  #   E(g.i)$weight<-c(E(g1.i)$weight,rep(0,length(nodes1)),rep(0,length(nodes1)),E(g2.i)$weight,E(g3.i)$weight)
+  #   
+  #   
+  #   g<-igraph.to.graphNEL(g.i)
+  #   
+  #   g <- initNodeAttribute (g, "shape", "char", "circle")
+  #   g <- initNodeAttribute (g, "color", "char", "black")
+  #   
+  #   g = initEdgeAttribute (g, "weight", "numeric", 1.0)
+  #   g = initEdgeAttribute (g, "size", "numeric", 1.0)
+  #   g = initEdgeAttribute (g, "label", "char", "")
+  #   
+  
+  window.title = 'vig2'
+  if (window.title %in% as.character (getWindowList (cy)))
+    deleteWindow (cy, window.title)
+  cw2 = new.CytoscapeWindow (window.title, g)
+  displayGraph (cw2)
+  layoutNetwork (cw2, 'jgraph-spring')
+  
+  
+  for (i in 1:length(gl)){
+    setNodePosition(cw2, nodes.list[[i]], unlist(pos)[grep(".x",names(unlist(pos)))]+offset.x*(i-1), 
+                    unlist(pos)[grep(".y",names(unlist(pos)))]+offset.y*ifelse(i%%2==0,0,2))    
+  }  
+  
+  
+  
+}
+
+
+
+#'@name corrplot.mc
+#'@aliases corrplot.mc
+#'@export corrplot.mc
+#'@docType methods
+#'@title A visualization of a correlation matrix 
+#'@description A graphical display of a correlation matrix, confidence interval.
+#'@author Hoai Tuong Nguyen (adapted from "corrplot" package)
+corrplot.mc<-function (corr, method = c("circle", "square", "ellipse", "number", 
+                                        "shade", "color", "pie"), type = c("full", "lower", "upper"), 
+                       add = FALSE, col = NULL, bg = "white", title = "", is.corr = TRUE, 
+                       diag = TRUE, outline = FALSE, mar = c(0, 0, 0, 0), addgrid.col = NULL, 
+                       addCoef.col = NULL, addCoefasPercent = FALSE, order = c("original", 
+                                                                               "AOE", "FPC", "hclust", "alphabet"), hclust.method = c("complete", 
+                                                                                                                                      "ward", "single", "average", "mcquitty", "median", "centroid"), 
+                       addrect = NULL, rect.col = "black", rect.lwd = 2, tl.pos = NULL, 
+                       tl.cex = 1, tl.col = "red", tl.offset = 0.4, tl.srt = 90, 
+                       cl.pos = NULL, cl.lim = NULL, cl.length = NULL, cl.cex = 0.8, 
+                       cl.ratio = 0.15, cl.align.text = "c", cl.offset = 0.5, addshade = c("negative", 
+                                                                                           "positive", "all"), shade.lwd = 1, shade.col = "white", 
+                       p.mat = NULL, sig.level = 0.05, sig = c("p-value"),insig = c("pch", "p-value", 
+                                                                                    "blank", "n"), p.cex = 1, pch = 4, pch.col = "black", pch.cex = 3, 
+                       plotCI = c("n", "square", "circle", "rect"), lowCI.mat = NULL, 
+                       uppCI.mat = NULL, ...) 
+{
+  method <- match.arg(method)
+  type <- match.arg(type)
+  order <- match.arg(order)
+  hclust.method <- match.arg(hclust.method)
+  plotCI <- match.arg(plotCI)
+  insig <- match.arg(insig)
+  if (!is.matrix(corr) & !is.data.frame(corr)) 
+    stop("Need a matrix or data frame!")
+  if (is.null(addgrid.col)) {
+    addgrid.col <- ifelse(method == "color" | method == "shade", 
+                          "white", "grey")
+  }
+  if (any(corr < cl.lim[1]) | any(corr > cl.lim[2])) 
+    stop("color limits should cover matrix")
+  if (is.null(cl.lim)) {
+    if (is.corr) 
+      cl.lim <- c(-1, 1)
+    if (!is.corr) 
+      cl.lim <- c(min(corr), max(corr))
+  }
+  intercept <- 0
+  zoom <- 1
+  if (!is.corr) {
+    if (max(corr) * min(corr) < 0) {
+      intercept <- 0
+      zoom <- 1/max(abs(cl.lim))
+    }
+    if (min(corr) >= 0) {
+      intercept <- -cl.lim[1]
+      zoom <- 1/(diff(cl.lim))
+    }
+    if (max(corr) <= 0) {
+      intercept <- -cl.lim[2]
+      zoom <- 1/(diff(cl.lim))
+    }
+    corr <- (intercept + corr) * zoom
+  }
+  cl.lim2 <- (intercept + cl.lim) * zoom
+  int <- intercept * zoom
+  if (min(corr) < -1 - .Machine$double.eps || max(corr) > 1 + 
+        .Machine$double.eps) {
+    stop("The matrix is not in [-1, 1]!")
+  }
+  if (is.null(col)) {
+    col <- colorRampPalette(c("#67001F", "#B2182B", "#D6604D", 
+                              "#F4A582", "#FDDBC7", "#FFFFFF", "#D1E5F0", "#92C5DE", 
+                              "#4393C3", "#2166AC", "#053061"))(200)
+  }
+  n <- nrow(corr)
+  m <- ncol(corr)
+  min.nm <- min(n, m)
+  ord <- 1:min.nm
+  if (!order == "original") {
+    ord <- corrMatOrder(corr, order = order, hclust.method = hclust.method)
+    corr <- corr[ord, ord]
+  }
+  if (is.null(rownames(corr))) 
+    rownames(corr) <- 1:n
+  if (is.null(colnames(corr))) 
+    colnames(corr) <- 1:m
+  getPos.Dat <- function(mat) {
+    x <- matrix(1:n * m, n, m)
+    tmp <- mat
+    if (type == "upper") 
+      tmp[row(x) > col(x)] <- Inf
+    if (type == "lower") 
+      tmp[row(x) < col(x)] <- Inf
+    if (type == "full") 
+      tmp <- tmp
+    if (!diag) 
+      diag(tmp) <- Inf
+    Dat <- tmp[is.finite(tmp)]
+    ind <- which(is.finite(tmp), arr.ind = TRUE)
+    Pos <- ind
+    Pos[, 1] <- ind[, 2]
+    Pos[, 2] <- -ind[, 1] + 1 + n
+    return(list(Pos, Dat))
+  }
+  Pos <- getPos.Dat(corr)[[1]]
+  n2 <- max(Pos[, 2])
+  n1 <- min(Pos[, 2])
+  nn <- n2 - n1
+  newrownames <- as.character(rownames(corr)[(n + 1 - n2):(n + 
+                                                             1 - n1)])
+  m2 <- max(Pos[, 1])
+  m1 <- min(Pos[, 1])
+  mm <- m2 - m1
+  newcolnames <- as.character(colnames(corr)[m1:m2])
+  DAT <- getPos.Dat(corr)[[2]]
+  len.DAT <- length(DAT)
+  assign.color <- function(DAT) {
+    newcorr <- (DAT + 1)/2
+    newcorr[newcorr == 1] <- 1 - 1e-10
+    col.fill <- col[floor(newcorr * length(col)) + 1]
+  }
+  col.fill <- assign.color(DAT)
+  isFALSE = function(x) identical(x, FALSE)
+  isTRUE = function(x) identical(x, TRUE)
+  if (isFALSE(tl.pos)) {
+    tl.pos <- "n"
+  }
+  if (is.null(tl.pos) | isTRUE(tl.pos)) {
+    if (type == "full") 
+      tl.pos <- "lt"
+    if (type == "lower") 
+      tl.pos <- "ld"
+    if (type == "upper") 
+      tl.pos <- "td"
+  }
+  if (isFALSE(cl.pos)) {
+    cl.pos <- "n"
+  }
+  if (is.null(cl.pos) | isTRUE(cl.pos)) {
+    if (type == "full") 
+      cl.pos <- "r"
+    if (type == "lower") 
+      cl.pos <- "b"
+    if (type == "upper") 
+      cl.pos <- "r"
+  }
+  if (outline) 
+    col.border <- "black"
+  if (!outline) 
+    col.border <- col.fill
+  if (!add) {
+    par(mar = mar, bg = "white")
+    plot.new()
+    xlabwidth <- ylabwidth <- 0
+    for (i in 1:50) {
+      xlim <- c(m1 - 0.5 - xlabwidth, m2 + 0.5 + mm * cl.ratio * 
+                  (cl.pos == "r"))
+      ylim <- c(n1 - 0.5 - nn * cl.ratio * (cl.pos == "b"), 
+                n2 + 0.5 + ylabwidth)
+      plot.window(xlim + c(-0.2, 0.2), ylim + c(-0.2, 0.2), 
+                  asp = 1, xaxs = "i", yaxs = "i")
+      x.tmp <- max(strwidth(newrownames, cex = tl.cex))
+      y.tmp <- max(strwidth(newcolnames, cex = tl.cex))
+      if (min(x.tmp - xlabwidth, y.tmp - ylabwidth) < 1e-04) 
+        break
+      xlabwidth <- x.tmp
+      ylabwidth <- y.tmp
+    }
+    if (tl.pos == "n" | tl.pos == "d") 
+      xlabwidth <- ylabwidth <- 0
+    if (tl.pos == "td") 
+      ylabwidth <- 0
+    if (tl.pos == "ld") 
+      xlabwidth <- 0
+    laboffset <- strwidth("W", cex = tl.cex) * tl.offset
+    xlim <- c(m1 - 0.5 - xlabwidth - laboffset, m2 + 0.5 + 
+                mm * cl.ratio * (cl.pos == "r")) + c(-0.35, 0.15)
+    ylim <- c(n1 - 0.5 - nn * cl.ratio * (cl.pos == "b"), 
+              n2 + 0.5 + ylabwidth * abs(sin(tl.srt * pi/180)) + 
+                laboffset) + c(-0.15, 0.35)
+    if (.Platform$OS.type == "windows") {
+      windows.options(width = 7, height = 7 * diff(ylim)/diff(xlim))
+    }
+    plot.window(xlim = xlim, ylim = ylim, asp = 1, xlab = "", 
+                ylab = "", xaxs = "i", yaxs = "i")
+  }
+  laboffset <- strwidth("W", cex = tl.cex) * tl.offset
+  symbols(Pos, add = TRUE, inches = FALSE, squares = rep(1, 
+                                                         len.DAT), bg = bg, fg = bg)
+  if (method == "circle" & plotCI == "n") {
+    symbols(Pos, add = TRUE, inches = FALSE, bg = col.fill, 
+            circles = 0.9 * abs(DAT)^0.5/2, fg = col.border)
+  }
+  if (method == "ellipse" & plotCI == "n") {
+    ell.dat <- function(rho, length = 99) {
+      k <- seq(0, 2 * pi, length = length)
+      x <- cos(k + acos(rho)/2)/2
+      y <- cos(k - acos(rho)/2)/2
+      return(cbind(rbind(x, y), c(NA, NA)))
+    }
+    ELL.dat <- lapply(DAT, ell.dat)
+    ELL.dat2 <- 0.85 * matrix(unlist(ELL.dat), ncol = 2, 
+                              byrow = TRUE)
+    ELL.dat2 <- ELL.dat2 + Pos[rep(1:length(DAT), each = 100), 
+                               ]
+    polygon(ELL.dat2, border = col.border, col = col.fill)
+  }
+  if (method == "number" & plotCI == "n") {
+    text(Pos[, 1], Pos[, 2], font = 2, col = col.fill, labels = round((DAT - 
+                                                                         int) * ifelse(addCoefasPercent, 100, 1)/zoom, ifelse(addCoefasPercent, 
+                                                                                                                              0, 2)))
+  }
+  if (method == "pie" & plotCI == "n") {
+    symbols(Pos, add = TRUE, inches = FALSE, circles = rep(0.5, 
+                                                           len.DAT) * 0.85)
+    pie.dat <- function(theta, length = 100) {
+      k <- seq(pi/2, pi/2 - theta, length = 0.5 * length * 
+                 abs(theta)/pi)
+      x <- c(0, cos(k)/2, 0)
+      y <- c(0, sin(k)/2, 0)
+      return(cbind(rbind(x, y), c(NA, NA)))
+    }
+    PIE.dat <- lapply(DAT * 2 * pi, pie.dat)
+    len.pie <- unlist(lapply(PIE.dat, length))/2
+    PIE.dat2 <- 0.85 * matrix(unlist(PIE.dat), ncol = 2, 
+                              byrow = TRUE)
+    PIE.dat2 <- PIE.dat2 + Pos[rep(1:length(DAT), len.pie), 
+                               ]
+    polygon(PIE.dat2, border = "black", col = col.fill)
+  }
+  if (method == "shade" & plotCI == "n") {
+    addshade <- match.arg(addshade)
+    symbols(Pos, add = TRUE, inches = FALSE, squares = rep(1, 
+                                                           len.DAT), bg = col.fill, fg = addgrid.col)
+    shade.dat <- function(w) {
+      x <- w[1]
+      y <- w[2]
+      rho <- w[3]
+      x1 <- x - 0.5
+      x2 <- x + 0.5
+      y1 <- y - 0.5
+      y2 <- y + 0.5
+      dat <- NA
+      if ((addshade == "positive" || addshade == "all") & 
+            rho > 0) {
+        dat <- cbind(c(x1, x1, x), c(y, y1, y1), c(x, 
+                                                   x2, x2), c(y2, y2, y))
+      }
+      if ((addshade == "negative" || addshade == "all") & 
+            rho < 0) {
+        dat <- cbind(c(x1, x1, x), c(y, y2, y2), c(x, 
+                                                   x2, x2), c(y1, y1, y))
+      }
+      return(t(dat))
+    }
+    pos_corr <- rbind(cbind(Pos, DAT))
+    pos_corr2 <- split(pos_corr, 1:nrow(pos_corr))
+    SHADE.dat <- matrix(na.omit(unlist(lapply(pos_corr2, 
+                                              shade.dat))), byrow = TRUE, ncol = 4)
+    segments(SHADE.dat[, 1], SHADE.dat[, 2], SHADE.dat[, 
+                                                       3], SHADE.dat[, 4], col = shade.col, lwd = shade.lwd)
+  }
+  if (method == "square" & plotCI == "n") {
+    symbols(Pos, add = TRUE, inches = FALSE, squares = abs(DAT)^0.5, 
+            bg = col.fill, fg = col.border)
+  }
+  if (method == "color" & plotCI == "n") {
+    symbols(Pos, add = TRUE, inches = FALSE, squares = rep(1, 
+                                                           len.DAT), bg = col.fill, fg = col.border)
+  }
+  symbols(Pos, add = TRUE, inches = FALSE, bg = NA, squares = rep(1, 
+                                                                  len.DAT), fg = addgrid.col)
+  if (plotCI != "n") {
+    if (is.null(lowCI.mat) || is.null(uppCI.mat)) 
+      stop("Need lowCI.mat and uppCI.mat!")
+    if (!order == "original") {
+      lowCI.mat <- lowCI.mat[ord, ord]
+      uppCI.mat <- uppCI.mat[ord, ord]
+    }
+    pos.lowNew <- getPos.Dat(lowCI.mat)[[1]]
+    lowNew <- getPos.Dat(lowCI.mat)[[2]]
+    pos.uppNew <- getPos.Dat(uppCI.mat)[[1]]
+    uppNew <- getPos.Dat(uppCI.mat)[[2]]
+    if (!(method == "circle" || method == "square")) 
+      stop("method shoud be circle or square if draw confidence interval!")
+    k1 <- (abs(uppNew) > abs(lowNew))
+    bigabs <- uppNew
+    bigabs[which(!k1)] <- lowNew[!k1]
+    smallabs <- lowNew
+    smallabs[which(!k1)] <- uppNew[!k1]
+    sig <- sign(uppNew * lowNew)
+    if (plotCI == "circle") {
+      symbols(pos.uppNew[, 1], pos.uppNew[, 2], add = TRUE, 
+              inches = FALSE, circles = 0.95 * abs(bigabs)^0.5/2, 
+              bg = ifelse(sig > 0, col.fill, col[ceiling((bigabs + 
+                                                            1) * length(col)/2)]), fg = ifelse(sig > 0, 
+                                                                                               col.fill, col[ceiling((bigabs + 1) * length(col)/2)]))
+      symbols(pos.lowNew[, 1], pos.lowNew[, 2], add = TRUE, 
+              inches = FALSE, circles = 0.95 * abs(smallabs)^0.5/2, 
+              bg = ifelse(sig > 0, bg, col[ceiling((smallabs + 
+                                                      1) * length(col)/2)]), fg = ifelse(sig > 0, 
+                                                                                         col.fill, col[ceiling((smallabs + 1) * length(col)/2)]))
+    }
+    if (plotCI == "square") {
+      symbols(pos.uppNew[, 1], pos.uppNew[, 2], add = TRUE, 
+              inches = FALSE, squares = abs(bigabs)^0.5, bg = ifelse(sig > 
+                                                                       0, col.fill, col[ceiling((bigabs + 1) * length(col)/2)]), 
+              fg = ifelse(sig > 0, col.fill, col[ceiling((bigabs + 
+                                                            1) * length(col)/2)]))
+      symbols(pos.lowNew[, 1], pos.lowNew[, 2], add = TRUE, 
+              inches = FALSE, squares = abs(smallabs)^0.5, 
+              bg = ifelse(sig > 0, bg, col[ceiling((smallabs + 
+                                                      1) * length(col)/2)]), fg = ifelse(sig > 0, 
+                                                                                         col.fill, col[ceiling((smallabs + 1) * length(col)/2)]))
+    }
+    if (plotCI == "rect") {
+      rect.width <- 0.25
+      rect(pos.uppNew[, 1] - rect.width, pos.uppNew[, 2] + 
+             smallabs/2, pos.uppNew[, 1] + rect.width, pos.uppNew[, 
+                                                                  2] + bigabs/2, col = col.fill, border = col.fill)
+      segments(pos.lowNew[, 1] - rect.width, pos.lowNew[, 
+                                                        2] + DAT/2, pos.lowNew[, 1] + rect.width, pos.lowNew[, 
+                                                                                                             2] + DAT/2, col = "black", lwd = 1)
+      segments(pos.uppNew[, 1] - rect.width, pos.uppNew[, 
+                                                        2] + uppNew/2, pos.uppNew[, 1] + rect.width, 
+               pos.uppNew[, 2] + uppNew/2, col = "black", lwd = 1)
+      segments(pos.lowNew[, 1] - rect.width, pos.lowNew[, 
+                                                        2] + lowNew/2, pos.lowNew[, 1] + rect.width, 
+               pos.lowNew[, 2] + lowNew/2, col = "black", lwd = 1)
+      segments(pos.lowNew[, 1] - 0.5, pos.lowNew[, 2], 
+               pos.lowNew[, 1] + 0.5, pos.lowNew[, 2], col = "grey70", 
+               lty = 3)
+    }
+  }
+  if (!is.null(p.mat) & !insig == "n") {
+    if (!order == "original") 
+      p.mat <- p.mat[ord, ord]
+    pos.pNew <- getPos.Dat(p.mat)[[1]]
+    pNew <- getPos.Dat(p.mat)[[2]]
+    ind.p <- which(pNew > (sig.level))
+    if (insig == "pch") {
+      points(pos.pNew[, 1][ind.p], pos.pNew[, 2][ind.p], 
+             pch = pch, col = pch.col, cex = pch.cex, lwd = 2)
+    }
+    if (insig == "p-value") {
+      text(pos.pNew[, 1][ind.p], pos.pNew[, 2][ind.p], 
+           round(pNew[ind.p], 2), col = pch.col)
+    }
+    if (insig == "blank") {
+      symbols(pos.pNew[, 1][ind.p], pos.pNew[, 2][ind.p], 
+              inches = FALSE, squares = rep(1, length(pos.pNew[, 
+                                                               1][ind.p])), fg = addgrid.col, bg = bg, add = TRUE)
+    }
+    
+  }
+  
+  if (!is.null(p.mat) & !sig == "n") {
+    options("scipen"=-100, "digits"=2)
+    r.mat <- corr[ord, ord]
+    rNew <- getPos.Dat(r.mat)[[2]]    
+    if (sig == "p-value") {
+      text(pos.pNew[, 1], pos.pNew[, 2], 
+           sprintf("r= %s\n p=%s",format(rNew, scientific=TRUE),format(pNew, scientific=TRUE)), col = pch.col,cex = p.cex)
+    }
+    
+    
+  }
+  
+  if (cl.pos != "n") {
+    colRange <- assign.color(cl.lim2)
+    ind1 <- which(col == colRange[1])
+    ind2 <- which(col == colRange[2])
+    colbar <- col[ind1:ind2]
+    if (is.null(cl.length)) 
+      cl.length <- ifelse(length(colbar) > 20, 11, length(colbar) + 
+                            1)
+    labels <- seq(cl.lim[1], cl.lim[2], length = cl.length)
+    at <- seq(0, 1, length = length(labels))
+    if (cl.pos == "r") {
+      vertical <- TRUE
+      xlim <- c(m2 + 0.5 + mm * 0.02, m2 + 0.5 + mm * cl.ratio)
+      ylim <- c(n1 - 0.5, n2 + 0.5)
+    }
+    if (cl.pos == "b") {
+      vertical <- FALSE
+      xlim <- c(m1 - 0.5, m2 + 0.5)
+      ylim <- c(n1 - 0.5 - nn * cl.ratio, n1 - 0.5 - nn * 
+                  0.02)
+    }
+    colorlegend(colbar = colbar, labels = round(labels, 2), 
+                offset = cl.offset, ratio.colbar = 0.3, cex = cl.cex, 
+                xlim = xlim, ylim = ylim, vertical = vertical, align = cl.align.text)
+  }
+  if (tl.pos != "n") {
+    ylabwidth2 <- strwidth(newrownames, cex = tl.cex)
+    xlabwidth2 <- strwidth(newcolnames, cex = tl.cex)
+    pos.xlabel <- cbind(m1:m2, n2 + 0.5 + laboffset)
+    pos.ylabel <- cbind(m1 - 0.5, n2:n1)
+    if (tl.pos == "td") {
+      if (type != "upper") 
+        stop("type should be \"upper\" if tl.pos is \"dt\".")
+      pos.ylabel <- cbind(m1:(m1 + nn) - 0.5, n2:n1)
+    }
+    if (tl.pos == "ld") {
+      if (type != "lower") 
+        stop("type should be \"lower\" if tl.pos is \"ld\".")
+      pos.xlabel <- cbind(m1:m2, n2:(n2 - mm) + 0.5 + laboffset)
+    }
+    if (tl.pos == "d") {
+      pos.ylabel <- cbind(m1:(m1 + nn) - 0.5, n2:n1)
+      pos.ylabel <- pos.ylabel[1:min(n, m), ]
+      symbols(pos.ylabel[, 1] + 0.5, pos.ylabel[, 2], add = TRUE, 
+              bg = bg, fg = addgrid.col, inches = FALSE, squares = rep(1, 
+                                                                       length(pos.ylabel[, 1])))
+      text(pos.ylabel[, 1] + 0.5, pos.ylabel[, 2], newcolnames[1:min(n, 
+                                                                     m)], col = tl.col, cex = tl.cex, ...)
+    }
+    else {
+      text(pos.xlabel[, 1], pos.xlabel[, 2], newcolnames, 
+           srt = tl.srt, adj = ifelse(tl.srt == 0, c(0.5, 
+                                                     0), c(0, 0)), col = tl.col, cex = tl.cex, offset = tl.offset, 
+           ...)
+      text(pos.ylabel[, 1], pos.ylabel[, 2], newrownames, 
+           col = tl.col, cex = tl.cex, pos = 2, offset = tl.offset, 
+           ...)
+    }
+  }
+  title(title, ...)
+  if (!is.null(addCoef.col) & (!method == "number")) {
+    text(Pos[, 1], Pos[, 2], col = addCoef.col, labels = round((DAT - 
+                                                                  int) * ifelse(addCoefasPercent, 100, 1)/zoom, ifelse(addCoefasPercent, 
+                                                                                                                       0, 2)))
+  }
+  if (type == "full" & plotCI == "n" & !is.null(addgrid.col)) 
+    rect(m1 - 0.5, n1 - 0.5, m2 + 0.5, n2 + 0.5, border = addgrid.col)
+  if (!is.null(addrect) & order == "hclust" & type == "full") {
+    corrRect.hclust(corr, k = addrect, method = hclust.method, 
+                    col = rect.col, lwd = rect.lwd)
+  }
+  invisible(corr)
+}
+
+
+
+#'@aliases filterCPSS.mc
+#'@export filterCPSS.mc
+#'@docType methods
+#'@title Performs Complementary Pairs Stability Selection (CPSS)
+#'@description Performs Complementary Pairs Stability Selection (CPSS), which is a particular case of ensemble FS method
+#'@param X A matrix of features, where one row = one sample / one column = one feature
+#'@param y A vector of outcomes (coded as 0 or 1)
+#'@param subFilter Which filter to use
+#'@param subthreshold Threshold for the subFilter to select features
+#'@param PSLimit Limit for the probability to be selected. Default 0.5 = we select features which are selected in 50% of internal runs
+#'@param nPairs Number of pairs in the ensemble.
+#'@param subExtraParam A list containing more parameters for the subFilter (mostly added for comprehensiveness reasons, shouldn't be much useful here)
+#'@param verbose Boolean, whether or not to output more details (default TRUE - it's not that much)
+#'@author David Dernoncourt
+
+# based on Shah 2011 - Variable selection with error control - another look at stability selection - http://arxiv.org/abs/1105.5578
+
+filterCPSS.mc = function(X,y,subFilter,subThreshold,PSLimit=0.50,nPairs=100,subExtraParam=NA,verbose=TRUE) {
+  # nombre d'observations
+  N=length(y);
+  NHalf1=round(N/2);
+  NHalf2=N-NHalf1;
+  # matrice pour stocker les nPairs*2 sélections (0: non sélectionné, 1: sélectionné)
+  selectionMatrix=matrix(0,nrow=nPairs*2,ncol=ncol(X));
+  
+  for(i in 1:nPairs) {
+    # on crée la paire d'index
+    indexes=list(NULL);
+    repeat {
+      indexes[[1]]=sample(1:N,NHalf1,replace=F);
+      indexes[[2]]=(1:N)[-indexes[[1]]];
+      if(length(which(y[indexes[[1]]]==0))>0 && length(which(y[indexes[[1]]]==1))>0 && length(which(y[indexes[[2]]]==0))>0 && length(which(y[indexes[[2]]]==1))>0) {
+        break;
+      }
+    }
+    for(j in 1:2) {
+      filtered=doFilter.mc(X=X[indexes[[j]],],y=y[indexes[[j]]],filter=subFilter,threshold=subThreshold,extraParam=subExtraParam,verbose=verbose);
+      selectionMatrix[(i-1)*2+j,filtered$Xselected]=1;
+    }
+  }
+  featureScores=apply(selectionMatrix,2,sum)/(nPairs*2);
+  featureRanks=rank(-featureScores);
+  Xselected=featureScores>=PSLimit;
+  # il faut s'assure que l'output contient au moins 2 variables
+  i=0.01;
+  while(length(which(Xselected))<2) {
+    Xselected=featureScores>=(PSLimit-i);
+    i=i+1;
+  }
+  if(verbose) {
+    cat('PSlimit:',PSLimit,'| selection length:',length(which(Xselected)),'out of',length(Xselected));
+  }
+  return(list(
+    featureScores=featureScores,
+    featureRanks=featureRanks,
+    Xselected=Xselected));
+}
+
+
+#'@aliases filterEnsemble.mc
+#'@export filterEnsemble.mc
+#'@docType methods
+#'@title Performs ensemble feature selection
+#'@description Ensemble feature selection, which can use all filters supported by doFilter.mc
+#'@param X A matrix of features, where one row = one sample / one column = one feature
+#'@param y A vector of outcomes (coded as 0 or 1)
+#'@param subFilter Which filter to use. Can be a vector of filters (for hybrid ensemble), but this might then be buggy.
+#'@param subthreshold Threshold for the subFilter to select features
+#'@param PSLimit Limit for the probability to be selected. Default 0.5 = we select features which are selected in 50% of internal runs. Note that in any case the function also return scores for all features so you can do your own thresholding (like, top 100) outside.
+#'@param ensembleRuns Number of resamplings in the ensemble. Default is 20, which is usually a good tradeoff between accuracy/stability and computation time.
+#'@param aggreType Type of agggregation: 'stab' (stability selection), 'avgScore' (average score), avgRank, expRank, bestScore, bestRank
+#'@param subExtraParam A list containing more parameters for the subFilter (mostly added for comprehensiveness reasons, shouldn't be much useful here)
+#'@param verbose Boolean, whether or not to output more details (default TRUE - it's not that much)
+#'@author David Dernoncourt
+filterEnsemble.mc = function(X,y,subFilter,subthreshold,PSLimit=0.50,ensembleRuns=20,aggreType='avgScore',subExtraParam=NA,verbose=TRUE) {
+  # nombre d'observations
+  N=length(y);
+  # matrice pour stocker les ensembleRuns sélections (0: non sélectionné, 1: sélectionné), scores et rangs
+  selectionMatrix=scoreMatrix=rankMatrix=matrix(0,nrow=ensembleRuns,ncol=ncol(X));
+  
+  for(i in 1:ensembleRuns) {
+    thisSubFilter=subFilter[i%%length(subFilter)+1];
+    # on choisi les indexes (avec remise)
+    indexes=NA;
+    # en s'assurant qu'on a au moins un y=0 et un y=1 dans le tirage
+    repeat {
+      indexes=sample(1:N,N,replace=T);
+      if(length(which(y[indexes]==0))>0 && length(which(y[indexes]==1))>0) {
+        break;
+      }
+    }
+    # on filtre et on enregistre le résultat
+    filtered=doFilter.mc(X=X[indexes,],y=y[indexes],filter=thisSubFilter,threshold=subthreshold,extraParam=subExtraParam,verbose=verbose);
+    selectionMatrix[i,filtered$Xselected]=1;
+    scoreMatrix[i,]=filtered$featureScores;
+    rankMatrix[i,]=filtered$featureRanks;
+  }
+  maxRank=matrix(max(rankMatrix),nrow=nrow(rankMatrix),ncol=ncol(rankMatrix));
+  if(aggreType=='stab') {
+    featureScores=apply(selectionMatrix,2,sum)/ensembleRuns;
+  } else if(aggreType=='avgScore') {
+    featureScores=apply(scoreMatrix,2,sum)/ensembleRuns;
+  } else if(aggreType=='bestScore') {
+    featureScores=apply(scoreMatrix,2,max);
+  } else if(aggreType=='avgRank') {
+    rankMatrix=(maxRank-rankMatrix)/maxRank;
+    featureScores=apply(rankMatrix,2,sum)/ensembleRuns;
+  } else if(aggreType=='bestRank') {
+    rankMatrix=(maxRank-rankMatrix)/maxRank;
+    featureScores=apply(rankMatrix,2,max);
+  } else if(aggreType=='expRank') {
+    rankMatrix=(maxRank-rankMatrix)^2/maxRank^2;
+    featureScores=apply(rankMatrix,2,sum)/ensembleRuns;
+  }
+  featureRanks=rank(-featureScores);
+  Xselected=featureScores>=PSLimit;
+  # il faut s'assurer que l'output contient au moins 2 variables
+  i=0.01;
+  while(length(which(Xselected))<2) {
+    Xselected=featureScores>=(PSLimit-i);
+    i=i+0.01;
+  }
+  if(verbose) {cat("limit: ",PSLimit," | selection length: ",length(which(Xselected)));}
+  return(list(
+    featureScores=featureScores,
+    featureRanks=featureRanks,
+    Xselected=Xselected));
+}
+
+
+
+#'@aliases doFilter.mc
+#'@export doFilter.mc
+#'@docType methods
+#'@title Applies a feature selection method
+#'@description Wrapper for various binary feature selection methods
+#'@param X A matrix of features, where one row = one sample / one column = one feature
+#'@param y A vector of outcomes (coded as 0 or 1)
+#'@param filter Which filter to use
+#'@param threshold Filter threshold (useful for the few feature selection methods which don't output feature scores)
+#'@param extraParam A list containing more filter parameters (mostly used for ensemble feature selection)
+#'@param verbose Boolean, whether or not to output more details (default TRUE - it's not that much)
+#'@author David Dernoncourt
+doFilter.mc = function(X,y,filter,threshold,extraParam=NA,verbose=TRUE,
+                       subFilter="ttest", # internal filter for techniques such as CPSS
+                       wrapThreshold=0.50, # threshold for the technique such as CPSS
+                       ensembleRuns=5, # number of bootstraps if performing ensemble
+                       ensembleAggreg='avgScore', # aggregation used for ensemble
+                       hybridWeight=NA, # manual weight for hybrid ensemble
+                       ...
+) {
+  if(verbose) {
+    cat(filter);
+  }
+  if(filter=="ttest") {
+    library.mc('multtest');
+    featureScores = mt.teststat(t(X), y, ...);
+    featureRanks = rank(-abs(featureScores));
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="CMAelasticnet" || filter=="CMAsvmRfe" || filter=="CMArf" || filter=="CMAshrinkcat"
+            || filter=="CMAboosting" || filter=="CMAgolub" || filter=="CMAwelch" || filter=="CMAwilcox" || filter=="CMAlasso") {
+    library.mc('CMA');
+    if(filter=="CMAelasticnet") {
+      #library.mc('glmpath');
+      selection=GeneSelection(X=X, y=as.factor(y), method='elasticnet', trace=verbose, ...);
+    } else if(filter=="CMAsvmRfe") {
+      library.mc('e1071');
+      selection=GeneSelection(X=X, y=as.factor(y), method='rfe', trace=verbose, ...);
+    } else if(filter=="CMArf") {
+      library.mc('randomForest');
+      selection=GeneSelection(X=X, y=as.factor(y), method='rf', trace=verbose, ...);
+    } else if(filter=="CMAshrinkcat") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='shrinkcat', trace=verbose);
+    } else if(filter=="CMAboosting") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='boosting', trace=verbose, ...);
+    } else if(filter=="CMAgolub") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='golub', trace=verbose);
+    } else if(filter=="CMAwelch") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='welch.test', trace=verbose);
+    } else if(filter=="CMAwilcox") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='wilcox.test', trace=verbose);
+    } else if(filter=="CMAlasso") {
+      selection=GeneSelection(X=X, y=as.factor(y), method='lasso', trace=verbose, ...);
+    }
+    selection=toplist(selection,k=ncol(X),iter=1,show=FALSE);
+    
+    featureRanks=featureScores=rep(NA,ncol(X));
+    featureScores[selection$index]=selection$importance;
+    selection$rank=1:ncol(X);
+    featureRanks[selection$index]=selection$rank;
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="sdaT") {
+    library.mc('sda');
+    selection = sda.ranking(X, y, diagonal=TRUE, ...);
+    featureRanks=featureScores=rep(NA,ncol(X));
+    featureScores[selection[1:ncol(X),"idx"]]=selection[1:ncol(X),"score"];
+    featureRanks = rank(-featureScores);
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="MI") { #my manual mutual information
+    tmpDiscr=discretize(as.data.frame(X));
+    featureScores=rep(NA,ncol(X));
+    tmpLoop=1:length(featureScores);
+    for(i in tmpLoop){
+      featureScores[i]=mutinformation(X=tmpDiscr[,i],Y=y,method="emp")
+    }
+    featureRanks=rank(-featureScores);
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="random") { # not a real filter, we just pick variables randomly! (useful to get baseline stability)
+    featureScores = runif(ncol(X),0,10);
+    featureRanks = rank(-abs(featureScores));
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="firstD") { # we just pick the first [threshold] variables (useful to get best var in artificial data)
+    featureScores = ncol(X):1;
+    featureRanks = rank(-abs(featureScores));
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="ReliefF") {
+    library.mc('CORElearn');
+    tmpDataFrame=as.data.frame(X);
+    tmpDataFrame[,'y']=y;
+    tmpObject=attrEval(y~.,tmpDataFrame,estimator='ReliefFequalK', ...);
+    featureScores=abs(tmpObject);
+    names(featureScores)=NULL;
+    featureRanks=rank(-featureScores);
+    Xselected = featureRanks<=threshold;
+  } else if(filter=="none") {
+    featureRanks=featureScores=rep(NA,ncol(X));Xselected = rep(TRUE,ncol(X));
+  } else if(filter=="CPSS" || filter=="CPSS2") {
+    tmpOut=filterCPSS.mc(X=X,y=y,subFilter=extraParam[['subFilter']],subThreshold=extraParam[['subThreshold']],PSLimit=threshold,nPairs=extraParam[['nPairs']]);
+    featureRanks=tmpOut$featureRanks;
+    featureScores=tmpOut$featureScores;
+    Xselected=tmpOut$Xselected;
+    if (filter=='CPSS2') { # dans CPSS2 au lieu de garder les variables tq pSelected>wrapThreshold, on garde les threshold meilleures variables
+      Xselected=(featureRanks<=threshold);
+    }
+  } else if(filter=="Ensemble" || filter=="Ensemble2") {
+    tmpOut=filterEnsemble.mc(X=X,y=y,subFilter=extraParam[['subFilter']],subthreshold=extraParam[['subThreshold']],PSLimit=threshold,ensembleRuns=extraParam[['ensembleRuns']],aggreType=extraParam[['ensembleAggreg']]);
+    featureRanks=tmpOut$featureRanks;
+    featureScores=tmpOut$featureScores;
+    Xselected=tmpOut$Xselected;
+    if(filter=="Ensemble2") { # dans Ensemble2 au lieu de garder les variables tq pSelected>wrapThreshold, on garde les threshold meilleures variables
+      Xselected=(featureRanks<=threshold);
+    }
+  } else {stop(paste("Filter",filter,"doesn't exist"));}
+  
+
+    ## below = todo (except last part = return output! ;))
+    ## Tuong (26/08/2014): I removed "else" to debug an error 
+    if(filter=="quickWrapper") { # our basic wrapper
+      tmpOut = quickWrapper(X=X,y=y,classifier=subFilter,threshold=threshold);
+      featureScores = tmpOut$featureScores;
+      featureRanks = rank(-abs(featureScores));
+      Xselected = rep(FALSE,ncol(X));
+      Xselected[tmpOut$selectedIndexes] = TRUE;
+    } else if(filter=="HybridEnsemble") {
+      tmpOut=filterHybridEnsemble(X=X,y=y,subFilter=subFilter,subthreshold=threshold,PSLimit=wrapThreshold,ensembleRuns=ensembleRuns,aggreType=ensembleAggreg,manualWeight=hybridWeight);
+      featureRanks=tmpOut$featureRanks;
+      featureScores=tmpOut$featureScores;
+      #Xselected=tmpOut$Xselected;
+      Xselected=(featureRanks<=threshold);
+    } else if(filter=="Boosting") {
+      tmpOut=filterBoosting(X=X,y=y,subFilter=NA,stepSize=10,threshold=threshold,aggreType=NA);
+      featureRanks=tmpOut$featureRanks;
+      featureScores=tmpOut$featureScores;
+      Xselected=tmpOut$Xselected;
+    } else if(filter=="Boosting2") {
+      tmpOut=filterBoosting2(X=X,y=y,subFilter='ttest',subthreshold=10,boostRuns=ensembleRuns,threshold=threshold,aggreType=ensembleAggreg,scoreWeightsOn=TRUE);
+      featureRanks=tmpOut$featureRanks;
+      featureScores=tmpOut$featureScores;
+      Xselected=tmpOut$Xselected;
+    }
+    #####
+
+  
+  return(list(
+    featureScores=featureScores,
+    featureRanks=featureRanks,
+    Xselected=Xselected));
+}
+
+
+#'@aliases doClassify.mc
+#'@export doClassify.mc
+#'@docType methods
+#'@title Train and applies a classification method
+#'@description Wrapper for various binary classification methods
+#'@param Xtrain A matrix of features for traning, where one row = one sample / one column = one feature
+#'@param ytrain A vector of outcomes for traning (coded as 0 or 1)
+#'@param Xtest A matrix of features for testing, where one row = one sample / one column = one feature
+#'@param classifier Which classifier to use
+#'@param probabilities Boolean, whether or not to return probability of class==1 instead of class (default FALSE)
+#'@param threshold Filter threshold (useful for the few feature selection methods which don't output feature scores)
+#'@param extraParam A list containing more filter parameters (mostly used for ensemble feature selection)
+#'@param verbose Boolean, whether or not to output more details (default TRUE - it's not that much)
+#'@author David Dernoncourt
+doClassify.mc = function(Xtrain,ytrain,Xtest,classifier,probabilities=FALSE,extraParam=list(),verbose=TRUE,
+	...
+){
+  if(classifier=="sdaDDA") {
+    # trains
+  	sda.fit = sda(as.matrix(Xtrain), ytrain, diagonal=TRUE);
+  	# predicts
+  	if(probabilities==FALSE) {
+  	  ynew = predict(sda.fit, as.matrix(Xtest))$class;
+  	} else {
+  	  posteriors = predict(sda.fit, as.matrix(Xtest))$posterior;
+  	  ynew=posteriors[,2];
+  	}
+  } else if(classifier=="sdaLDA") {
+  	sda.fit = sda(as.matrix(Xtrain), ytrain, diagonal=FALSE);
+    if(probabilities==FALSE) {
+      ynew = predict(sda.fit, as.matrix(Xtest))$class;
+    } else {
+      posteriors = predict(sda.fit, as.matrix(Xtest))$posterior;
+      ynew=posteriors[,2];
+    }
+  } else if(classifier=="knn") {
+    if(probabilities==FALSE) {
+      stop('This kNN cannot output probabilities');
+    }
+    library.mc('class');
+    if(is.null(extraParam[['nNeighbors']])) {extraParam[['nNeighbors']]=3;}
+    ynew = knn(Xtrain, Xtest, ytrain, k=extraParam[['nNeighbors']]);
+  } else if(classifier=="RF") {
+    rf.fit = randomForest(x=as.matrix(Xtrain), y=as.factor(ytrain));
+	if(is.null(extraParam[['RFclasswt']])) {extraParam[['RFclasswt']]=NULL;}
+    if(probabilities==FALSE) {
+  	  ynew = predict(rf.fit, as.matrix(Xtest), classwt=extraParam[['RFclasswt']]);
+    } else {
+      posteriors = predict(rf.fit, as.matrix(Xtest), type="prob", classwt=extraParam[['RFclasswt']], corr.bias=FALSE);
+      ynew=posteriors[,2];
+    }
+  } else if(classifier=="cforest") {
+    library.mc('party');
+    rf.fit = cforest(formula=ytrain~., data=as.data.frame(cbind(Xtrain,ytrain)));
+    # predict behaves strangely, alway outputs probabilities but as vector if type not set and as messy list if type="prob"...
+    posteriors = as.vector(predict(rf.fit, Xtest));
+    if(probabilities==FALSE) {
+      ynew=rep(0,length(posteriors));
+      ynew[which(posteriors)>0.5]=1;
+    } else {
+      ynew=round(posteriors,3);
+    }
+    names(ynew)=rownames(Xtest);
+  } else if(classifier=="SVM.linear") {
+    if(probabilities==FALSE) {
+      svm.e1071.mdl = svm(Xtrain, as.factor(ytrain), kernel="linear");
+    	ynew = predict(svm.e1071.mdl, Xtest);
+    } else {
+      svm.e1071.mdl = svm(Xtrain, as.factor(ytrain), kernel="linear", probability=TRUE);
+      posteriors = predict(svm.e1071.mdl, Xtest, probability=TRUE);
+      ynew=attr(posteriors,"probabilities")[,2];
+    }
+  } else if(classifier=="SVM.rbf") {
+    if(probabilities==FALSE) {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="rbfdot");
+      ynew = predict(svm.kernlab.mdl,Xtest);
+    } else {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="rbfdot",prob.model=TRUE);
+      posteriors = predict(svm.kernlab.mdl, Xtest, type="probabilities");
+      ynew=posteriors[,2];
+    }
+  } else if(classifier=="SVM.anova") {
+    if(probabilities==FALSE) {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="anovadot");
+      ynew = predict(svm.kernlab.mdl,Xtest);
+    } else {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="anovadot",prob.model=TRUE);
+      posteriors = predict(svm.kernlab.mdl, Xtest, type="probabilities");
+      ynew=posteriors[,2];
+    }
+  } else if(classifier=="SVM.laplace") {
+    if(probabilities==FALSE) {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="laplacedot");
+      ynew = predict(svm.kernlab.mdl,Xtest);
+    } else {
+      svm.kernlab.mdl = ksvm(Xtrain, as.factor(ytrain),kernel="laplacedot",prob.model=TRUE);
+      posteriors = predict(svm.kernlab.mdl, Xtest, type="probabilities");
+      ynew=posteriors[,2];
+    }
+  } else if(classifier=="nnet") {
+    myNetwork = nnet(Xtrain, ytrain,linout=TRUE,size=round(ncol(Xtrain)/2),trace=FALSE,MaxNWts=20000);cat(".");
+    if(probabilities==FALSE) {
+  	  ynew = round(predict(myNetwork,Xtest));
+    } else {
+      ynew = predict(myNetwork,Xtest);
+    }
+  } else if(classifier=="neuralMLP") {
+  	if(probabilities==FALSE) {
+      stop('neuralMLP should be used with probabilities');
+    }
+    library.mc('neural');
+	if(is.null(extraParam[['neurons']])) {extraParam[['neurons']]=c(5,3);}
+	if(is.null(extraParam[['it']])) {extraParam[['it']]=50;}
+	if(is.null(extraParam[['alpha']])) {extraParam[['alpha']]=0.2;}
+	if(is.null(extraParam[['thresh']])) {extraParam[['thresh']]=0;}
+	if(is.null(extraParam[['actfns']])) {extraParam[['actfns']]=c();}
+	tmpNetwork=mlptrain(inp=as.matrix(Xtrain),neurons=extraParam[['neurons']],out=as.matrix(ytrain),alfa=extraParam[['alpha']],it=extraParam[['it']],online=TRUE,permute=TRUE,thresh=extraParam[['thresh']],actfns=extraParam[['actfns']],visual=FALSE);
+	ynew=mlp(inp=as.matrix(Xtest),weight=tmpNetwork$weight,dist=tmpNetwork$dist,neurons=tmpNetwork$neurons,actfns=extraParam[['actfns']]);
+  } else if(classifier=="glmnet") {
+    library.mc('glmnet');
+    tmpFit=cv.glmnet(x=Xtrain,y=ytrain,family='binomial',alpha=0.5);
+    ynew=predict(tmpFit,type='response',newx=Xtest);
+    if(probabilities==FALSE) {
+      ynew = round(ynew);
+    }
+  } else if(classifier=="GNB") {
+    library.mc('klaR');
+    # http://stackoverflow.com/questions/9157626/naive-bayes-in-r
+    nb.res = NaiveBayes(x=Xtrain,grouping=as.factor(ytrain));
+    ynew = as.integer(predict(nb.res, Xtest)$class)-1;
+  } else {
+    stop(paste("invalid classifier:",classifier));
+  }
+  return(ynew);
+}
